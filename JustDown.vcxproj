@@ -442,7 +442,6 @@
     <ClInclude Include="lib\glm\vec4.hpp" />
     <ClInclude Include="lib\glm\vector_relational.hpp" />
     <ClInclude Include="lib\KHR\khrplatform.h" />
-    <ClInclude Include="src\CameraManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\glfw3.lib" />
