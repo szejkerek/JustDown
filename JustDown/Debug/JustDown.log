@@ -1,9 +1,5 @@
 ﻿  Application.cpp
-C:\#Projects\JustDown\src\Application.cpp(88,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\#Projects\JustDown\src\Application.cpp(89,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\#Projects\JustDown\src\Application.cpp(93,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\#Projects\JustDown\src\Application.cpp(94,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\#Projects\JustDown\src\Application.cpp(95,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\#Projects\JustDown\src\Application.cpp(96,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\#Projects\JustDown\src\Application.cpp(217,28): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\#Projects\JustDown\src\Application.cpp(122,28): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  Shader.h
+  Generating Code...
   JustDown.vcxproj -> C:\#Projects\JustDown\Debug\JustDown.exe
