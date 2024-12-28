@@ -1,6 +1,7 @@
 #include <glad/gl.h>
 #include <GLFW/include/GLFW/glfw3.h>
 #include <iostream>
+#include "Context.h"
 
 // Function to initialize GLFW and set hints
 bool initGLFW()
@@ -42,3 +43,27 @@ bool initGLAD()
     }
     return true;
 }
+
+void processInput(GLFWwindow* window)
+{
+    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+    else
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+}
+
+float lastFrame = 0.0f;
+
+float calculateDeltatime()
+{
+    float currentFrame = glfwGetTime();
+    float del = currentFrame - lastFrame; // Correct order of subtraction
+    lastFrame = currentFrame;
+    return del;
+}
+
+

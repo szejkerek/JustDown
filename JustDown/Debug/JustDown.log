@@ -1,5 +1,3 @@
-﻿  Application.cpp
-C:\#Projects\JustDown\src\Application.cpp(102,28): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-JustDown\Debug\glm.obj : warning LNK4042: object specified more than once; extras ignored
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+﻿  Context.cpp
+C:\#Projects\JustDown\src\Context.cpp(63,24): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   JustDown.vcxproj -> C:\#Projects\JustDown\Debug\JustDown.exe

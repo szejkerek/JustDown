@@ -8,14 +8,12 @@
 #include "Camera.h"
 #include "Context.h"
 
-// Global variables
 float deltaTime = 0.0f;
-float lastFrame = 0.0f;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
-// Callback functions
-void processInput(GLFWwindow* window)
+void processInput_callback(GLFWwindow* window)
 {
+    processInput(window);
     camera.processInput(window, deltaTime);
 }
 
@@ -98,18 +96,11 @@ int main()
     // Render loop
     while (!glfwWindowShouldClose(window))
     {
-        // Frame time calculations
-        float currentFrame = glfwGetTime();
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
+        processInput_callback(window);
+        deltaTime = calculateDeltatime();
 
-        // Process input
-        processInput(window);
-
-        // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Use shader program
         ourShader.use();
 
         glm::mat4 view = camera.getViewMatrix();
@@ -119,16 +110,13 @@ int main()
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("transform", transform);
 
-        // Draw cube
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
-        // Swap buffers and poll events
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
-    // Cleanup and terminate
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
