@@ -6,20 +6,23 @@
 #include <iostream>
 #include "Shader.h"
 #include "Camera.h"
+#include "Context.h"
 
-
+// Global variables
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
-void processInput(GLFWwindow* window) {
+// Callback functions
+void processInput(GLFWwindow* window)
+{
     camera.processInput(window, deltaTime);
 }
 
-void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
     camera.mouseCallback(xpos, ypos);
 }
-
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -28,44 +31,21 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 int main()
 {
-    // Initialize GLFW
-    if (!glfwInit())
-    {
-        std::cerr << "Failed to initialize GLFW" << std::endl;
+    if (!initGLFW())
         return -1;
-    }
 
-    // Set GLFW to use OpenGL 3.3 Core Profile
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    // Create a GLFW window
-    GLFWwindow* window = glfwCreateWindow(800, 600, "Toggle Free Fly Camera", nullptr, nullptr);
+    GLFWwindow* window = createWindow(800, 600, "Toggle Free Fly Camera");
     if (!window)
-    {
-        std::cerr << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
         return -1;
-    }
 
-    glfwMakeContextCurrent(window);
+    if (!initGLAD())
+        return -1;
+
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
-    // Set mouse callback
     glfwSetCursorPosCallback(window, mouse_callback);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // Hide and capture the cursor
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    // Initialize GLAD
-    if (!gladLoaderLoadGL())
-    {
-        std::cerr << "Failed to initialize GLAD" << std::endl;
-        return -1;
-    }
-
-    // Enable depth test
     glEnable(GL_DEPTH_TEST);
-
     Shader ourShader("src/Shaders/VertexShader.vs", "src/Shaders/FragmentShader.fs");
 
     // Define cube vertices with colors

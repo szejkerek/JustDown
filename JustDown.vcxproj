@@ -147,6 +147,7 @@
     <ClCompile Include="lib\glm\glm.cppm" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\Context.cpp" />
     <ClCompile Include="src\gl.c" />
     <ClCompile Include="src\Shader.h" />
   </ItemGroup>
@@ -444,6 +445,7 @@
     <ClInclude Include="lib\glm\vector_relational.hpp" />
     <ClInclude Include="lib\KHR\khrplatform.h" />
     <ClInclude Include="src\Camera.h" />
+    <ClInclude Include="src\Context.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\glfw3.lib" />
