@@ -31,3 +31,5 @@
 *.out
 *.app
 .vs/
+
+!lib/glfw3.lib

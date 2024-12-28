@@ -1,0 +1,14 @@
+﻿  glm.cpp
+  glm.cppm
+C:\#Projects\test\JustDown\lib\glm\glm.cppm(1,1): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\#Projects\test\JustDown\lib\glm\glm.cppm(10,1): error C3378: a declaration can be exported only from a module interface unit
+C:\#Projects\test\JustDown\lib\glm\glm.cppm(10,8): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\#Projects\test\JustDown\lib\glm\glm.cppm(10,8): error C2086: 'int module': redefinition
+      C:\(1,1):
+      see declaration of 'module'
+  
+C:\#Projects\test\JustDown\lib\glm\glm.cppm(10,15): error C2146: syntax error: missing ';' before identifier 'glm'
+C:\#Projects\test\JustDown\lib\glm\glm.cppm(12,1): error C3378: a declaration can be exported only from a module interface unit
+C:\#Projects\test\JustDown\lib\glm\glm.cppm(2672,1): error C3378: a declaration can be exported only from a module interface unit
+  Application.cpp
+  Generating Code...
