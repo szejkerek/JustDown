@@ -27,6 +27,9 @@
     <ClCompile Include="lib\glm\glm.cppm">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Shader.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\GLFW\include\GLFW\glfw3.h">
@@ -1324,5 +1327,7 @@
     <None Include="lib\glm\gtx\wrap.inl">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="src\VertexShader.vs" />
+    <None Include="src\FragmentShader.fs" />
   </ItemGroup>
 </Project>
