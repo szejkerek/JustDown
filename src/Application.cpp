@@ -5,116 +5,16 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include "Shader.h"
+#include "CameraManager.h"
 
-// Camera parameters
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-
-glm::vec3 savedCameraPos = cameraPos; // To save the fixed position
-glm::vec3 savedCameraFront = cameraFront;
-
-bool freeFlyMode = false; // Track the current mode
-bool keyPressed = false;  // Prevent holding the key from toggling repeatedly
-
-float yaw = -90.0f; // Initial yaw
-float pitch = 0.0f; // Initial pitch
-float lastX = 400, lastY = 300; // Initial mouse position
-bool firstMouse = true; // First mouse movement check
 
 float deltaTime = 0.0f; // Time between frames
 float lastFrame = 0.0f; // Time of last frame
 
-void processInput(GLFWwindow* window)
-{
-    const float cameraSpeed = 2.5f * deltaTime; // Adjust camera speed
-
-    // Toggle free-fly mode with the "O" key
-    if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS && !keyPressed)
-    {
-        freeFlyMode = !freeFlyMode;
-
-        if (!freeFlyMode)
-        {
-            // Restore the saved fixed camera position
-            cameraPos = savedCameraPos;
-            cameraFront = savedCameraFront;
-        }
-        else
-        {
-            // Save the current camera position for returning later
-            savedCameraPos = cameraPos;
-            savedCameraFront = cameraFront;
-        }
-
-        keyPressed = true;
-    }
-    if (glfwGetKey(window, GLFW_KEY_O) == GLFW_RELEASE)
-    {
-        keyPressed = false;
-    }
-
-    // Movement controls only in free-fly mode
-    if (freeFlyMode)
-    {
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            cameraPos += cameraSpeed * cameraFront;
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-            cameraPos -= cameraSpeed * cameraFront;
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-    }
-
-    // Toggle Wireframe mode while holding the "P" key
-    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
-    {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Wireframe mode
-    }
-    else
-    {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Default (filled) mode
-    }
-}
 
 
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
-{
-    if (!freeFlyMode) return; // Mouse input is only for free-fly mode
 
-    if (firstMouse)
-    {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
 
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; // Reversed: y-coordinates range from bottom to top
-    lastX = xpos;
-    lastY = ypos;
-
-    const float sensitivity = 0.1f;
-    xoffset *= sensitivity;
-    yoffset *= sensitivity;
-
-    yaw += xoffset;
-    pitch += yoffset;
-
-    // Constrain pitch to avoid screen flipping
-    if (pitch > 89.0f)
-        pitch = 89.0f;
-    if (pitch < -89.0f)
-        pitch = -89.0f;
-
-    // Update camera direction
-    glm::vec3 direction;
-    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    direction.y = sin(glm::radians(pitch));
-    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    cameraFront = glm::normalize(direction);
-}
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -123,6 +23,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 int main()
 {
+    CameraManager cameraManager;
+    cameraManager.Init();
     // Initialize GLFW
     if (!glfwInit())
     {
@@ -147,8 +49,9 @@ int main()
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+
     // Set mouse callback
-    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetCursorPosCallback(window, cameraManager.mouse_callback);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // Hide and capture the cursor
 
     // Initialize GLAD
@@ -219,7 +122,7 @@ int main()
         lastFrame = currentFrame;
 
         // Process input
-        processInput(window);
+        cameraManager.processInput(window, deltaTime);
 
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -228,21 +131,12 @@ int main()
         ourShader.use();
 
         // Update view matrix based on camera mode
-        glm::mat4 view;
-        if (freeFlyMode)
-        {
-            view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-        }
-        else
-        {
-            // Fixed camera view
-            view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        }
+       
 
         // Set uniforms
         glm::mat4 transform = glm::rotate(glm::mat4(1.0f), (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
 
-        ourShader.setMat4("view", view);
+        ourShader.setMat4("view", cameraManager.GetView());
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("transform", transform);
 

@@ -9,7 +9,7 @@
 #include <unordered_map>
 #include <stdexcept>
 #include <filesystem>
-#include <glad/glad.h>
+#include <glad/gl.h>
 #include <glm/glm.hpp>
 
 class Shader
