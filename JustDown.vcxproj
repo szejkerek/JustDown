@@ -446,6 +446,7 @@
     <ClInclude Include="lib\KHR\khrplatform.h" />
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Context.h" />
+    <ClInclude Include="src\Model\Model.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\glfw3.lib" />
