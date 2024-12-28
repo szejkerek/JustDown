@@ -1,2 +1,11 @@
-﻿  Shader.h
+﻿  Application.cpp
+C:\#Projects\JustDown\src\Application.cpp(77,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\#Projects\JustDown\src\Application.cpp(78,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\#Projects\JustDown\src\Application.cpp(82,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\#Projects\JustDown\src\Application.cpp(83,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\#Projects\JustDown\src\Application.cpp(84,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\#Projects\JustDown\src\Application.cpp(85,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\#Projects\JustDown\src\Application.cpp(206,28): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+JustDown\Debug\glm.obj : warning LNK4042: object specified more than once; extras ignored
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
   JustDown.vcxproj -> C:\#Projects\JustDown\Debug\JustDown.exe
