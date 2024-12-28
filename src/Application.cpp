@@ -66,7 +66,18 @@ void processInput(GLFWwindow* window)
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
             cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
     }
+
+    // Toggle Wireframe mode while holding the "P" key
+    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Wireframe mode
+    }
+    else
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Default (filled) mode
+    }
 }
+
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
