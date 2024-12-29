@@ -150,8 +150,10 @@
     <ClCompile Include="src\Context.cpp" />
     <ClCompile Include="src\gl.c" />
     <ClCompile Include="src\Shader.h" />
+    <ClCompile Include="lib\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="C:\Users\maton\Downloads\stb_image.h" />
     <ClInclude Include="lib\glad\gl.h" />
     <ClInclude Include="lib\GLFW\include\GLFW\glfw3.h" />
     <ClInclude Include="lib\GLFW\include\GLFW\glfw3native.h" />
@@ -549,9 +551,11 @@
     <ClInclude Include="lib\spdlog\stopwatch.h" />
     <ClInclude Include="lib\spdlog\tweakme.h" />
     <ClInclude Include="lib\spdlog\version.h" />
+    <ClInclude Include="lib\stb_image.h" />
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Context.h" />
     <ClInclude Include="src\Model\Model.h" />
+    <ClInclude Include="src\Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\glfw3.lib" />

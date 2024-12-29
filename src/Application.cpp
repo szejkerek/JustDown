@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "Context.h"
 #include "Model/Model.h"
+#include "Texture.h"
 
 
 float deltaTime = 0.0f;
@@ -54,6 +55,13 @@ int main()
     pistolModel.setPosition(-0.1,0,2.5);
     pistolModel.setRotation(0,90,0);
 
+    Model pistolModel2;
+    pistolModel2.loadFromFile("Data/Pistol/Pistol.obj");
+    pistolModel2.setPosition(0.3, 0, 2.5);
+    pistolModel2.setRotation(0, -45, 0);
+
+    Texture texture("Data/Pistol/pistol.png", GL_TEXTURE_2D);
+
     while (!glfwWindowShouldClose(window))
     {
         processInput_callback(window);
@@ -62,16 +70,15 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         ourShader.use();
-
+        ourShader.setInt("texture1", 0);
+        texture.bind(0);
         glm::mat4 view = camera.getViewMatrix();
-        glm::mat4 modelTransform = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.0f, 0.0f)); // Adjust position
-        modelTransform = glm::scale(modelTransform, glm::vec3(0.1f)); // Adjust scale
 
         ourShader.setMat4("view", view);
         ourShader.setMat4("projection", projection);
-        ourShader.setMat4("transform", modelTransform);
 
-        pistolModel.render(ourShader.ID);
+        pistolModel.render(ourShader);
+        pistolModel2.render(ourShader);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

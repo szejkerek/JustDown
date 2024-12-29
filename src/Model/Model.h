@@ -154,15 +154,15 @@ public:
         std::cout << "Buffers setup complete." << std::endl;
     }
 
-    void render(GLuint shaderProgram) const {
+    void render(Shader shaderProgram) const {
         glm::mat4 modelMatrix = glm::mat4(1.0f); // Identity matrix
         modelMatrix = glm::translate(modelMatrix, position);
         modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
         modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
         modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 
-        GLint modelLoc = glGetUniformLocation(shaderProgram, "transform");
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+
+        shaderProgram.setMat4("transform", modelMatrix);
 
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(faces.size() * 3));
