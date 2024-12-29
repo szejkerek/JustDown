@@ -1,3 +1,9 @@
-﻿  Context.cpp
-C:\#Projects\JustDown\src\Context.cpp(63,24): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+﻿  Application.cpp
+C:\#Projects\JustDown\src\Model\Model.h(111,49): warning C4018: '<': signed/unsigned mismatch
+  (compiling source file '../../#Projects/JustDown/src/Application.cpp')
+  
+C:\#Projects\JustDown\src\Model\Model.h(121,49): warning C4018: '<': signed/unsigned mismatch
+  (compiling source file '../../#Projects/JustDown/src/Application.cpp')
+  
+C:\#Projects\JustDown\src\Application.cpp(54,29): warning C4305: 'argument': truncation from 'double' to 'float'
   JustDown.vcxproj -> C:\#Projects\JustDown\Debug\JustDown.exe

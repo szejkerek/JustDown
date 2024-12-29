@@ -9,6 +9,7 @@
 #include "Context.h"
 #include "Model/Model.h"
 
+
 float deltaTime = 0.0f;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
@@ -45,16 +46,14 @@ int main()
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     glEnable(GL_DEPTH_TEST);
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
     Shader ourShader("src/Shaders/VertexShader.vs", "src/Shaders/FragmentShader.fs");
 
-    // Load the OBJ model
     Model pistolModel;
     pistolModel.loadFromFile("Data/Pistol/Pistol.obj");
-    pistolModel.setupBuffers();
+    pistolModel.setPosition(-0.1,0,2.5);
+    pistolModel.setRotation(0,90,0);
 
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-
-    // Render loop
     while (!glfwWindowShouldClose(window))
     {
         processInput_callback(window);
@@ -72,7 +71,7 @@ int main()
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("transform", modelTransform);
 
-        pistolModel.render();
+        pistolModel.render(ourShader.ID);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

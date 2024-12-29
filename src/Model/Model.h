@@ -3,8 +3,10 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include "glad/gl.h"
-#include <GLFW/include/GLFW/glfw3.h>
 
 struct Vertex {
     float x, y, z;
@@ -30,6 +32,9 @@ public:
     std::vector<Face> faces;
     GLuint VAO = 0, VBO = 0;
 
+    glm::vec3 position = glm::vec3(0.0f); // Position of the model
+    glm::vec3 rotation = glm::vec3(0.0f); // Rotation (in degrees)
+
     Model() = default;
 
     bool loadFromFile(const std::string& filename) {
@@ -51,19 +56,16 @@ public:
                 Vertex v;
                 ss >> v.x >> v.y >> v.z;
                 vertices.push_back(v);
-                std::cout << "Loaded vertex: (" << v.x << ", " << v.y << ", " << v.z << ")" << std::endl;
             }
             else if (prefix == "vt") {
                 TexCoord tc;
                 ss >> tc.u >> tc.v;
                 texCoords.push_back(tc);
-                std::cout << "Loaded texture coordinate: (" << tc.u << ", " << tc.v << ")" << std::endl;
             }
             else if (prefix == "vn") {
                 Normal n;
                 ss >> n.x >> n.y >> n.z;
                 normals.push_back(n);
-                std::cout << "Loaded normal: (" << n.x << ", " << n.y << ", " << n.z << ")" << std::endl;
             }
             else if (prefix == "f") {
                 Face f = {};
@@ -74,31 +76,24 @@ public:
                     std::istringstream vertexStream(vertexData);
                     std::string index;
 
-                    // Parse vertex index
                     if (std::getline(vertexStream, index, '/')) {
                         f.v[i] = std::stoi(index) - 1;
                     }
 
-                    // Parse texture coordinate index
                     if (std::getline(vertexStream, index, '/')) {
                         f.t[i] = !index.empty() ? std::stoi(index) - 1 : -1;
                     }
 
-                    // Parse normal index
                     if (std::getline(vertexStream, index)) {
                         f.n[i] = !index.empty() ? std::stoi(index) - 1 : -1;
                     }
                 }
                 faces.push_back(f);
-                std::cout << "Loaded face: vertices (" << f.v[0] << ", " << f.v[1] << ", " << f.v[2] << ")";
-                std::cout << ", texture coordinates (" << f.t[0] << ", " << f.t[1] << ", " << f.t[2] << ")";
-                std::cout << ", normals (" << f.n[0] << ", " << f.n[1] << ", " << f.n[2] << ")" << std::endl;
             }
         }
 
-        std::cout << "Finished loading model. Total vertices: " << vertices.size() << ", textures: " << texCoords.size() << ", normals: " << normals.size() << ", faces: " << faces.size() << std::endl;
-
         file.close();
+        setupBuffers();
         return true;
     }
 
@@ -137,8 +132,6 @@ public:
             }
         }
 
-        std::cout << "Total vertex data size: " << vertexData.size() << " floats." << std::endl;
-
         glGenVertexArrays(1, &VAO);
         glGenBuffers(1, &VBO);
 
@@ -158,25 +151,38 @@ public:
 
         glBindVertexArray(0);
 
-        std::cout << "Buffers setup complete. VAO: " << VAO << ", VBO: " << VBO << std::endl;
+        std::cout << "Buffers setup complete." << std::endl;
     }
 
-    void render() const {
-        std::cout << "Rendering model..." << std::endl;
+    void render(GLuint shaderProgram) const {
+        glm::mat4 modelMatrix = glm::mat4(1.0f); // Identity matrix
+        modelMatrix = glm::translate(modelMatrix, position);
+        modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+        modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+        modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+
+        GLint modelLoc = glGetUniformLocation(shaderProgram, "transform");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(faces.size() * 3));
         glBindVertexArray(0);
-        std::cout << "Rendering complete." << std::endl;
     }
 
     ~Model() {
         if (VAO) {
-            std::cout << "Deleting VAO: " << VAO << std::endl;
             glDeleteVertexArrays(1, &VAO);
         }
         if (VBO) {
-            std::cout << "Deleting VBO: " << VBO << std::endl;
             glDeleteBuffers(1, &VBO);
         }
+    }
+
+    void setPosition(float x, float y, float z) {
+        position = glm::vec3(x, y, z);
+    }
+
+    void setRotation(float pitch, float yaw, float roll) {
+        rotation = glm::vec3(pitch, yaw, roll);
     }
 };
