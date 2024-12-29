@@ -11,6 +11,7 @@
 #include "Texture.h"
 
 
+
 float deltaTime = 0.0f;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
@@ -47,8 +48,9 @@ int main()
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     glEnable(GL_DEPTH_TEST);
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-    Shader ourShader("src/Shaders/VertexShader.vs", "src/Shaders/FragmentShader.fs");
+    
+    Shader texturedShader("src/Shaders/TexturedShader/VertexShader.vs", "src/Shaders/TexturedShader/FragmentShader.fs");
+    Shader coloredShader("src/Shaders/ColoredShader/VertexShader.vs", "src/Shaders/ColoredShader/FragmentShader.fs");
 
     Model pistolModel;
     pistolModel.loadFromFile("Data/Pistol/Pistol.obj");
@@ -62,26 +64,33 @@ int main()
 
     Texture texture("Data/Pistol/pistol.png", GL_TEXTURE_2D);
 
+
     while (!glfwWindowShouldClose(window))
     {
         processInput_callback(window);
         deltaTime = calculateDeltatime();
-
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        ourShader.use();
-        ourShader.setInt("texture1", 0);
-        texture.bind(0);
+        glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
         glm::mat4 view = camera.getViewMatrix();
 
-        ourShader.setMat4("view", view);
-        ourShader.setMat4("projection", projection);
 
-        pistolModel.render(ourShader);
-        pistolModel2.render(ourShader);
+        texturedShader.use();
+        texturedShader.setMat4("projection", projection);
+        texturedShader.setMat4("view", view);
+        texturedShader.setInt("texture1", 0);
+        texture.bind(0);
+        pistolModel.render(texturedShader);
+
+
+        coloredShader.use();
+        coloredShader.setMat4("projection", projection);
+        coloredShader.setMat4("view", view);
+
+        pistolModel2.render(coloredShader);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
+
     }
 
     glfwTerminate();

@@ -699,8 +699,12 @@
     <None Include="lib\glm\gtx\vector_angle.inl" />
     <None Include="lib\glm\gtx\vector_query.inl" />
     <None Include="lib\glm\gtx\wrap.inl" />
-    <None Include="src\Shaders\FragmentShader.fs" />
-    <None Include="src\Shaders\VertexShader.vs" />
+    <None Include="src\Shaders\ColoredShader\FragmentShader.fs" />
+    <None Include="src\Shaders\ColoredShader\VertexShader.vs" />
+    <None Include="src\Shaders\Test\FragmentShader.fs" />
+    <None Include="src\Shaders\Test\VertexShader.vs" />
+    <None Include="src\Shaders\TexturedShader\FragmentShader.fs" />
+    <None Include="src\Shaders\TexturedShader\VertexShader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

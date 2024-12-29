@@ -154,7 +154,7 @@ public:
         std::cout << "Buffers setup complete." << std::endl;
     }
 
-    void render(Shader shaderProgram) const {
+    void render(Shader& shaderProgram) const {
         glm::mat4 modelMatrix = glm::mat4(1.0f); // Identity matrix
         modelMatrix = glm::translate(modelMatrix, position);
         modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
