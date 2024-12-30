@@ -42,6 +42,7 @@ bool initGLAD()
         return false;
     }
     return true;
+    //false
 }
 
 void processInput(GLFWwindow* window)
