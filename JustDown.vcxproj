@@ -554,7 +554,8 @@
     <ClInclude Include="lib\stb_image.h" />
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Context.h" />
-    <ClInclude Include="src\Model\Model.h" />
+    <ClInclude Include="src\Model.h" />
+    <ClInclude Include="src\Scene.h" />
     <ClInclude Include="src\Texture.h" />
   </ItemGroup>
   <ItemGroup>

@@ -7,10 +7,8 @@
 #include "Shader.h"
 #include "Camera.h"
 #include "Context.h"
-#include "Model/Model.h"
+#include "Model.h"
 #include "Texture.h"
-
-
 
 float deltaTime = 0.0f;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -61,6 +59,7 @@ int main()
     pistolModel2.loadFromFile("Data/Pistol/Pistol.obj");
     pistolModel2.setPosition(0.3, 0, 2.5);
     pistolModel2.setRotation(0, -45, 0);
+    pistolModel2.setScale(3, 3, 3);
 
     Texture texture("Data/Pistol/pistol.png", GL_TEXTURE_2D);
 

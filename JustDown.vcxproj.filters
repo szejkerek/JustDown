@@ -923,7 +923,7 @@
     <ClInclude Include="src\Context.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Model\Model.h">
+    <ClInclude Include="src\Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="lib\spdlog\cfg\argv.h">
@@ -1248,6 +1248,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="lib\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

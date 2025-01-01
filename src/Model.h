@@ -34,6 +34,7 @@ public:
 
     glm::vec3 position = glm::vec3(0.0f); // Position of the model
     glm::vec3 rotation = glm::vec3(0.0f); // Rotation (in degrees)
+    glm::vec3 scale = glm::vec3(1.0f);    // Scale of the model (default is 1.0 for uniform scaling)
 
     Model() = default;
 
@@ -160,7 +161,7 @@ public:
         modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
         modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
         modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-
+        modelMatrix = glm::scale(modelMatrix, scale);
 
         shaderProgram.setMat4("transform", modelMatrix);
 
@@ -184,5 +185,9 @@ public:
 
     void setRotation(float pitch, float yaw, float roll) {
         rotation = glm::vec3(pitch, yaw, roll);
+    }
+
+    void setScale(float x, float y, float z) {
+        scale = glm::vec3(x, y, z);
     }
 };
