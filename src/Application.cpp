@@ -51,7 +51,7 @@ int main()
     Shader coloredShader("src/Shaders/ColoredShader/VertexShader.vs", "src/Shaders/ColoredShader/FragmentShader.fs");
 
     Model pistolModel;
-    pistolModel.loadFromFile("Data/Pistol/Pistol.obj");
+    pistolModel.loadFromFile("Data/Pistol/Pistol.obj", "Data/Pistol/pistol.png");
     pistolModel.setPosition(-0.1,0,2.5);
     pistolModel.setRotation(0,90,0);
 
@@ -60,8 +60,6 @@ int main()
     pistolModel2.setPosition(0.3, 0, 2.5);
     pistolModel2.setRotation(0, -45, 0);
     pistolModel2.setScale(3, 3, 3);
-
-    Texture texture("Data/Pistol/pistol.png", GL_TEXTURE_2D);
 
 
     while (!glfwWindowShouldClose(window))
@@ -76,10 +74,9 @@ int main()
         texturedShader.use();
         texturedShader.setMat4("projection", projection);
         texturedShader.setMat4("view", view);
-        texturedShader.setInt("texture1", 0);
-        texture.bind(0);
         pistolModel.render(texturedShader);
 
+        
 
         coloredShader.use();
         coloredShader.setMat4("projection", projection);

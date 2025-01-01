@@ -7,6 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "glad/gl.h"
+#include "Texture.h"
 
 struct Vertex {
     float x, y, z;
@@ -24,6 +25,14 @@ struct Face {
     int v[3], t[3], n[3];
 };
 
+enum ModelType
+{
+    Colored = 0,
+    Textured = 1,
+    DoubleTextured = 2
+};
+
+
 class Model {
 public:
     std::vector<Vertex> vertices;
@@ -31,6 +40,9 @@ public:
     std::vector<Normal> normals;
     std::vector<Face> faces;
     GLuint VAO = 0, VBO = 0;
+    Texture texture1;
+    Texture texture2;
+    ModelType modelType;
 
     glm::vec3 position = glm::vec3(0.0f); // Position of the model
     glm::vec3 rotation = glm::vec3(0.0f); // Rotation (in degrees)
@@ -38,7 +50,7 @@ public:
 
     Model() = default;
 
-    bool loadFromFile(const std::string& filename) {
+    bool loadFromFile(const std::string& filename, std::string texture1filename = "", std::string texture2filename = "") {
         std::ifstream file(filename);
         if (!file.is_open()) {
             std::cerr << "Failed to open OBJ file: " << filename << std::endl;
@@ -95,6 +107,33 @@ public:
 
         file.close();
         setupBuffers();
+
+        int type = 0;
+
+        if (texture1filename != "")
+        {
+            type++;
+            texture1 = Texture(texture1filename, GL_TEXTURE_2D);
+        }
+        if (texture2filename != "")
+        {
+            type++;
+            texture2 = Texture(texture2filename, GL_TEXTURE_2D);
+        }
+
+        switch (type)
+        { 
+            case 1:
+                modelType = Textured;
+                break;
+            case 2:
+                modelType = DoubleTextured;
+                break;
+            default:
+                modelType = Colored;
+                break;
+        }
+
         return true;
     }
 
@@ -156,19 +195,43 @@ public:
     }
 
     void render(Shader& shaderProgram) const {
-        glm::mat4 modelMatrix = glm::mat4(1.0f); // Identity matrix
+   
+        glm::mat4 modelMatrix = glm::mat4(1.0f); 
         modelMatrix = glm::translate(modelMatrix, position);
         modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
         modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
         modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
         modelMatrix = glm::scale(modelMatrix, scale);
 
+    
         shaderProgram.setMat4("transform", modelMatrix);
 
+     
+        if (texture1.isLoaded) {
+            shaderProgram.setInt("texture1", 0);
+            texture1.bind(0);
+        }
+
+      
+        if (texture2.isLoaded) {
+            shaderProgram.setInt("texture2", 1);
+            texture2.bind(1);
+        }
+
+      
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(faces.size() * 3));
         glBindVertexArray(0);
+
+     
+        if (texture1.isLoaded) {
+            texture1.unbind();
+        }
+        if (texture2.isLoaded) {
+            texture2.unbind();
+        }
     }
+
 
     ~Model() {
         if (VAO) {
