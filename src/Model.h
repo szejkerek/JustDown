@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -40,8 +42,8 @@ public:
     std::vector<Normal> normals;
     std::vector<Face> faces;
     GLuint VAO = 0, VBO = 0;
+    Texture texture0;
     Texture texture1;
-    Texture texture2;
     ModelType modelType;
 
     glm::vec3 position = glm::vec3(0.0f); // Position of the model
@@ -50,7 +52,7 @@ public:
 
     Model() = default;
 
-    bool loadFromFile(const std::string& filename, std::string texture1filename = "", std::string texture2filename = "") {
+    bool loadFromFile(const std::string& filename) {
         std::ifstream file(filename);
         if (!file.is_open()) {
             std::cerr << "Failed to open OBJ file: " << filename << std::endl;
@@ -108,31 +110,7 @@ public:
         file.close();
         setupBuffers();
 
-        int type = 0;
-
-        if (texture1filename != "")
-        {
-            type++;
-            texture1 = Texture(texture1filename, GL_TEXTURE_2D);
-        }
-        if (texture2filename != "")
-        {
-            type++;
-            texture2 = Texture(texture2filename, GL_TEXTURE_2D);
-        }
-
-        switch (type)
-        { 
-            case 1:
-                modelType = Textured;
-                break;
-            case 2:
-                modelType = DoubleTextured;
-                break;
-            default:
-                modelType = Colored;
-                break;
-        }
+       
 
         return true;
     }
@@ -207,15 +185,15 @@ public:
         shaderProgram.setMat4("transform", modelMatrix);
 
      
-        if (texture1.isLoaded) {
+        if (texture0.isLoaded) {
             shaderProgram.setInt("texture1", 0);
-            texture1.bind(0);
+            texture0.bind(0);
         }
 
       
-        if (texture2.isLoaded) {
+        if (texture1.isLoaded) {
             shaderProgram.setInt("texture2", 1);
-            texture2.bind(1);
+            texture1.bind(1);
         }
 
       
@@ -224,11 +202,11 @@ public:
         glBindVertexArray(0);
 
      
+        if (texture0.isLoaded) {
+            texture0.unbind();
+        }
         if (texture1.isLoaded) {
             texture1.unbind();
-        }
-        if (texture2.isLoaded) {
-            texture2.unbind();
         }
     }
 
@@ -240,6 +218,38 @@ public:
         if (VBO) {
             glDeleteBuffers(1, &VBO);
         }
+    }
+
+    void setTexture(int pos, std::string path) {
+
+        // Load texture based on position
+        if (pos == 0)
+        {
+            texture0 = Texture(path, GL_TEXTURE_2D);
+        }
+        else if (pos == 1)
+        {
+            texture1 = Texture(path, GL_TEXTURE_2D);
+        }
+        else
+        {
+            std::cout << "Wrong texture pos" << std::endl;
+        }
+
+        // Determine model type based on texture loading status
+        if (texture0.isLoaded && texture1.isLoaded)
+        {
+            modelType = DoubleTextured;
+        }
+        else if (texture0.isLoaded || texture1.isLoaded)
+        {
+            modelType = Textured;
+        }
+        else
+        {
+            modelType = Colored;
+        }
+
     }
 
     void setPosition(float x, float y, float z) {
