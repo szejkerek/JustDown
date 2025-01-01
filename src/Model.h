@@ -202,12 +202,12 @@ public:
         glBindVertexArray(0);
 
      
-        if (texture0.isLoaded) {
-            texture0.unbind();
-        }
-        if (texture1.isLoaded) {
-            texture1.unbind();
-        }
+        //if (texture0.isLoaded) {
+        //    texture0.unbind();
+        //}
+        //if (texture1.isLoaded) {
+        //    texture1.unbind();
+        //}
     }
 
 

@@ -11,24 +11,18 @@ class Scene
 {
 public:
     Scene();
-    ~Scene();
-
-    // Load scene description from a text file
     bool loadFromFile(const std::string& filePath);
-
-    // Render all models in the scene (optional, if needed)
     void render() const;
 
 private:
     std::vector<Model> sceneModels;
+    Shader texturedShader;
+    Shader coloredShader;
 };
 
 Scene::Scene()
-{
-}
-
-Scene::~Scene()
-{
+    : texturedShader("src/Shaders/TexturedShader/VertexShader.vs", "src/Shaders/TexturedShader/FragmentShader.fs"),
+    coloredShader("src/Shaders/ColoredShader/VertexShader.vs", "src/Shaders/ColoredShader/FragmentShader.fs") {
 }
 
 bool Scene::loadFromFile(const std::string& filePath)
@@ -61,6 +55,18 @@ bool Scene::loadFromFile(const std::string& filePath)
 
             sceneModels.push_back(std::move(model));
         }
+        else if (command == "Texture0")
+        {
+            if (sceneModels.empty())
+            {
+                std::cerr << "Texture0 command before any Model command." << std::endl;
+                continue;
+            }
+
+            std::string texturePath;
+            lineStream >> texturePath;
+            sceneModels.back().setTexture(0, texturePath);
+        }
         else if (command == "Texture1")
         {
             if (sceneModels.empty())
@@ -71,19 +77,7 @@ bool Scene::loadFromFile(const std::string& filePath)
 
             std::string texturePath;
             lineStream >> texturePath;
-            sceneModels.back().loadTexture(0, texturePath); // Assuming texture index 0
-        }
-        else if (command == "Texture2")
-        {
-            if (sceneModels.empty())
-            {
-                std::cerr << "Texture2 command before any Model command." << std::endl;
-                continue;
-            }
-
-            std::string texturePath;
-            lineStream >> texturePath;
-            sceneModels.back().loadTexture(1, texturePath); // Assuming texture index 1
+            sceneModels.back().setTexture(1, texturePath);
         }
         else if (command == "Position")
         {
@@ -135,6 +129,6 @@ void Scene::render() const
 {
     for (const auto& model : sceneModels)
     {
-        model.render(); // Assuming Model has a render method
+        //model.render();
     }
 }
