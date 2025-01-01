@@ -62,10 +62,11 @@ int main()
 
     Model pistolModel2;
     pistolModel2.loadFromFile("Data/Pistol/Pistol.obj");
+
+    pistolModel2.setTexture(0, "Data/Pistol/pistol.png");
     pistolModel2.setPosition(0.3, 0, 2.5);
     pistolModel2.setRotation(0, -45, 0);
     pistolModel2.setScale(3, 3, 3);
-
 
     while (!glfwWindowShouldClose(window))
     {
@@ -81,11 +82,12 @@ int main()
         texturedShader.setMat4("view", view);
         pistolModel.render(texturedShader);   
 
+        pistolModel2.render(texturedShader);
+
         coloredShader.use();
         coloredShader.setMat4("projection", projection);
         coloredShader.setMat4("view", view);
 
-        pistolModel2.render(coloredShader);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

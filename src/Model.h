@@ -10,6 +10,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "glad/gl.h"
 #include "Texture.h"
+#include <memory>
 
 struct Vertex {
     float x, y, z;
@@ -42,8 +43,8 @@ public:
     std::vector<Normal> normals;
     std::vector<Face> faces;
     GLuint VAO = 0, VBO = 0;
-    Texture texture0;
-    Texture texture1;
+    std::unique_ptr<Texture> texture0 = nullptr; 
+    std::unique_ptr<Texture> texture1 = nullptr;
     ModelType modelType;
 
     glm::vec3 position = glm::vec3(0.0f); // Position of the model
@@ -173,40 +174,34 @@ public:
     }
 
     void render(Shader& shaderProgram) const {
-   
-        glm::mat4 modelMatrix = glm::mat4(1.0f); 
+        glm::mat4 modelMatrix = glm::mat4(1.0f);
         modelMatrix = glm::translate(modelMatrix, position);
         modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
         modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
         modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
         modelMatrix = glm::scale(modelMatrix, scale);
 
-    
         shaderProgram.setMat4("transform", modelMatrix);
 
-     
-        if (texture0.isLoaded) {
+        if (texture0 && texture0->isLoaded) {
             shaderProgram.setInt("texture1", 0);
-            texture0.bind(0);
+            texture0->bind(0);
         }
 
-      
-        if (texture1.isLoaded) {
+        if (texture1 && texture1->isLoaded) {
             shaderProgram.setInt("texture2", 1);
-            texture1.bind(1);
+            texture1->bind(1);
         }
 
-      
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(faces.size() * 3));
         glBindVertexArray(0);
 
-     
-        if (texture0.isLoaded) {
-            texture0.unbind();
+        if (texture0 && texture0->isLoaded) {
+            texture0->unbind();
         }
-        if (texture1.isLoaded) {
-            texture1.unbind();
+        if (texture1 && texture1->isLoaded) {
+            texture1->unbind();
         }
     }
 
@@ -220,36 +215,26 @@ public:
         }
     }
 
-    void setTexture(int pos, std::string path) {
-
-        // Load texture based on position
-        if (pos == 0)
-        {
-            texture0 = Texture(path, GL_TEXTURE_2D);
+    void setTexture(int pos, const std::string& path) {
+        if (pos == 0) {
+            texture0 = std::make_unique<Texture>(path, GL_TEXTURE_2D);
         }
-        else if (pos == 1)
-        {
-            texture1 = Texture(path, GL_TEXTURE_2D);
+        else if (pos == 1) {
+            texture1 = std::make_unique<Texture>(path, GL_TEXTURE_2D);
         }
-        else
-        {
+        else {
             std::cout << "Wrong texture pos" << std::endl;
         }
 
-        // Determine model type based on texture loading status
-        if (texture0.isLoaded && texture1.isLoaded)
-        {
+        if (texture0 && texture0->isLoaded && texture1 && texture1->isLoaded) {
             modelType = DoubleTextured;
         }
-        else if (texture0.isLoaded || texture1.isLoaded)
-        {
+        else if ((texture0 && texture0->isLoaded) || (texture1 && texture1->isLoaded)) {
             modelType = Textured;
         }
-        else
-        {
+        else {
             modelType = Colored;
         }
-
     }
 
     void setPosition(float x, float y, float z) {
