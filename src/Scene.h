@@ -19,7 +19,7 @@ public:
 private:
     std::shared_ptr<Camera> currentCam;
     glm::mat4 projection;
-
+    Model model;
     std::vector<Model> sceneModels;
     std::shared_ptr<Shader> texturedShader;
     std::shared_ptr<Shader> coloredShader;
@@ -47,6 +47,7 @@ bool Scene::loadFromFile(const std::string& filePath)
     }
 
     std::string line;
+    
     while (std::getline(file, line))
     {
         std::istringstream lineStream(line);
@@ -55,7 +56,7 @@ bool Scene::loadFromFile(const std::string& filePath)
 
         if (command == "Model")
         {
-            Model model;
+            
             std::string modelPath;
             lineStream >> modelPath;
 
@@ -66,6 +67,7 @@ bool Scene::loadFromFile(const std::string& filePath)
             }
 
             sceneModels.push_back(std::move(model));
+            sceneModels.back().setupBuffers();
         }
         else if (command == "Texture0")
         {
@@ -132,6 +134,12 @@ bool Scene::loadFromFile(const std::string& filePath)
             std::cerr << "Unknown command: " << command << std::endl;
         }
     }
+
+    //for (auto& model : sceneModels)
+    //{
+    //    model.setupBuffers();
+    //}
+
 
     file.close();
     return true;

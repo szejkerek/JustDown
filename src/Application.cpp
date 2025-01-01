@@ -48,17 +48,22 @@ int main()
 
     glEnable(GL_DEPTH_TEST);
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-    //Shader texturedShader("src/Shaders/TexturedShader/VertexShader.vs", "src/Shaders/TexturedShader/FragmentShader.fs");
-    //Shader coloredShader("src/Shaders/ColoredShader/VertexShader.vs", "src/Shaders/ColoredShader/FragmentShader.fs");
-
+    //std::shared_ptr<Shader> texturedShader(std::make_shared<Shader>(
+    //    "src/Shaders/TexturedShader/VertexShader.vs",
+    //    "src/Shaders/TexturedShader/FragmentShader.fs"));
+    //std::shared_ptr<Shader> coloredShader(std::make_shared<Shader>(
+    //    "src/Shaders/ColoredShader/VertexShader.vs",
+    ////    "src/Shaders/ColoredShader/FragmentShader.fs"));
+    //Model pistolModel;
+    //pistolModel.loadFromFile("Data/Pistol/Pistol.obj");
+    //
     Scene scene(projection, camera);
     scene.loadFromFile("Data/Level0.scene");
 
-    //Model pistolModel;
-    //pistolModel.loadFromFile("Data/Pistol/Pistol.obj");
-    //pistolModel.setTexture(0, "Data/Pistol/pistol.png");
-    //pistolModel.setPosition(-0.1, 0, 2.5);
-    //pistolModel.setRotation(0, 90, 0);
+    
+    ////pistolModel.setTexture(0, "Data/Pistol/pistol.png");
+    ////pistolModel.setPosition(-0.1, 0, 2.5);
+    ////pistolModel.setRotation(0, 90, 0);
 
     //Model pistolModel2;
     //pistolModel2.loadFromFile("Data/Pistol/Pistol.obj");
@@ -75,19 +80,19 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         scene.render();
-        //glm::mat4 view = camera.getViewMatrix();
+       /* glm::mat4 view = camera.getViewMatrix();
 
 
-        //texturedShader.use();
-        //texturedShader.setMat4("projection", projection);
-        //texturedShader.setMat4("view", view);
-        //pistolModel.render(texturedShader);   
+        texturedShader->use();
+        texturedShader->setMat4("projection", projection);
+        texturedShader->setMat4("view", view);
+        pistolModel.render(texturedShader);   
 
-        //pistolModel2.render(texturedShader);
+        pistolModel2.render(texturedShader);
 
-        //coloredShader.use();
-        //coloredShader.setMat4("projection", projection);
-        //coloredShader.setMat4("view", view);
+        coloredShader->use();
+        coloredShader->setMat4("projection", projection);
+        coloredShader->setMat4("view", view);*/
 
 
         glfwSwapBuffers(window);
