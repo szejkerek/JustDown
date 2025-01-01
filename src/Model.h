@@ -43,8 +43,8 @@ public:
     std::vector<Normal> normals;
     std::vector<Face> faces;
     GLuint VAO = 0, VBO = 0;
-    std::unique_ptr<Texture> texture0 = nullptr; 
-    std::unique_ptr<Texture> texture1 = nullptr;
+    std::shared_ptr<Texture> texture0 = nullptr; 
+    std::shared_ptr<Texture> texture1 = nullptr;
     ModelType modelType;
 
     glm::vec3 position = glm::vec3(0.0f); // Position of the model
