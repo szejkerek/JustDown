@@ -9,6 +9,7 @@
 #include "Context.h"
 #include "Model.h"
 #include "Texture.h"
+#include "Scene.h"
 
 float deltaTime = 0.0f;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -50,10 +51,14 @@ int main()
     Shader texturedShader("src/Shaders/TexturedShader/VertexShader.vs", "src/Shaders/TexturedShader/FragmentShader.fs");
     Shader coloredShader("src/Shaders/ColoredShader/VertexShader.vs", "src/Shaders/ColoredShader/FragmentShader.fs");
 
+    Scene scene;
+    scene.loadFromFile("Data/Level0.scene");
+
     Model pistolModel;
-    pistolModel.loadFromFile("Data/Pistol/Pistol.obj", "Data/Pistol/pistol.png");
-    pistolModel.setPosition(-0.1,0,2.5);
-    pistolModel.setRotation(0,90,0);
+    pistolModel.loadFromFile("Data/Pistol/Pistol.obj");
+    pistolModel.setTexture(0, "Data/Pistol/pistol.png");
+    pistolModel.setPosition(-0.1, 0, 2.5);
+    pistolModel.setRotation(0, 90, 0);
 
     Model pistolModel2;
     pistolModel2.loadFromFile("Data/Pistol/Pistol.obj");
@@ -74,9 +79,7 @@ int main()
         texturedShader.use();
         texturedShader.setMat4("projection", projection);
         texturedShader.setMat4("view", view);
-        pistolModel.render(texturedShader);
-
-        
+        pistolModel.render(texturedShader);   
 
         coloredShader.use();
         coloredShader.setMat4("projection", projection);
