@@ -47,46 +47,47 @@ int main()
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     glEnable(GL_DEPTH_TEST);
-    
-    Shader texturedShader("src/Shaders/TexturedShader/VertexShader.vs", "src/Shaders/TexturedShader/FragmentShader.fs");
-    Shader coloredShader("src/Shaders/ColoredShader/VertexShader.vs", "src/Shaders/ColoredShader/FragmentShader.fs");
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+    //Shader texturedShader("src/Shaders/TexturedShader/VertexShader.vs", "src/Shaders/TexturedShader/FragmentShader.fs");
+    //Shader coloredShader("src/Shaders/ColoredShader/VertexShader.vs", "src/Shaders/ColoredShader/FragmentShader.fs");
 
-    Scene scene;
+    Scene scene(projection, camera);
     scene.loadFromFile("Data/Level0.scene");
 
-    Model pistolModel;
-    pistolModel.loadFromFile("Data/Pistol/Pistol.obj");
-    pistolModel.setTexture(0, "Data/Pistol/pistol.png");
-    pistolModel.setPosition(-0.1, 0, 2.5);
-    pistolModel.setRotation(0, 90, 0);
+    //Model pistolModel;
+    //pistolModel.loadFromFile("Data/Pistol/Pistol.obj");
+    //pistolModel.setTexture(0, "Data/Pistol/pistol.png");
+    //pistolModel.setPosition(-0.1, 0, 2.5);
+    //pistolModel.setRotation(0, 90, 0);
 
-    Model pistolModel2;
-    pistolModel2.loadFromFile("Data/Pistol/Pistol.obj");
-
-    pistolModel2.setTexture(0, "Data/Pistol/pistol.png");
-    pistolModel2.setPosition(0.3, 0, 2.5);
-    pistolModel2.setRotation(0, -45, 0);
-    pistolModel2.setScale(3, 3, 3);
+    //Model pistolModel2;
+    //pistolModel2.loadFromFile("Data/Pistol/Pistol.obj");
+    //pistolModel2.setTexture(0, "Data/Pistol/pistol.png");
+    //pistolModel2.setPosition(0.3, 0, 2.5);
+    //pistolModel2.setRotation(0, -45, 0);
+    //pistolModel2.setScale(3, 3, 3);
+        
 
     while (!glfwWindowShouldClose(window))
     {
         processInput_callback(window);
         deltaTime = calculateDeltatime();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-        glm::mat4 view = camera.getViewMatrix();
+
+        scene.render();
+        //glm::mat4 view = camera.getViewMatrix();
 
 
-        texturedShader.use();
-        texturedShader.setMat4("projection", projection);
-        texturedShader.setMat4("view", view);
-        pistolModel.render(texturedShader);   
+        //texturedShader.use();
+        //texturedShader.setMat4("projection", projection);
+        //texturedShader.setMat4("view", view);
+        //pistolModel.render(texturedShader);   
 
-        pistolModel2.render(texturedShader);
+        //pistolModel2.render(texturedShader);
 
-        coloredShader.use();
-        coloredShader.setMat4("projection", projection);
-        coloredShader.setMat4("view", view);
+        //coloredShader.use();
+        //coloredShader.setMat4("projection", projection);
+        //coloredShader.setMat4("view", view);
 
 
         glfwSwapBuffers(window);

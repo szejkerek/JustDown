@@ -10,19 +10,31 @@
 class Scene
 {
 public:
-    Scene();
+    Scene(glm::mat4 projection, Camera &cam);
     bool loadFromFile(const std::string& filePath);
     void render() const;
 
+    std::shared_ptr<Shader> GetShader(const Model& model) const;
+
 private:
+    std::shared_ptr<Camera> currentCam;
+    glm::mat4 projection;
+
     std::vector<Model> sceneModels;
-    Shader texturedShader;
-    Shader coloredShader;
+    std::shared_ptr<Shader> texturedShader;
+    std::shared_ptr<Shader> coloredShader;
 };
 
-Scene::Scene()
-    : texturedShader("src/Shaders/TexturedShader/VertexShader.vs", "src/Shaders/TexturedShader/FragmentShader.fs"),
-    coloredShader("src/Shaders/ColoredShader/VertexShader.vs", "src/Shaders/ColoredShader/FragmentShader.fs") {
+Scene::Scene(glm::mat4 projection, Camera& cam)
+    : texturedShader(std::make_shared<Shader>(
+        "src/Shaders/TexturedShader/VertexShader.vs",
+        "src/Shaders/TexturedShader/FragmentShader.fs")),
+    coloredShader(std::make_shared<Shader>(
+        "src/Shaders/ColoredShader/VertexShader.vs",
+        "src/Shaders/ColoredShader/FragmentShader.fs")),
+    projection(projection)
+{
+    currentCam = std::make_shared<Camera>(cam);
 }
 
 bool Scene::loadFromFile(const std::string& filePath)
@@ -129,6 +141,34 @@ void Scene::render() const
 {
     for (const auto& model : sceneModels)
     {
-        //model.render();
+        model.render(GetShader(model));
     }
 }
+
+std::shared_ptr<Shader> Scene::GetShader(const Model& model) const
+{
+    std::shared_ptr<Shader> shaderToUse;
+
+    // Determine the shader to use based on the model type
+    switch (model.modelType)
+    {
+    case Colored:
+        shaderToUse = coloredShader;
+        break;
+    case Textured:
+    case DoubleTextured:
+        shaderToUse = texturedShader;
+        break;
+    default:
+        shaderToUse = coloredShader;
+        break;
+    }
+
+    // Common setup for the shader
+    shaderToUse->use();
+    shaderToUse->setMat4("projection", projection);
+    shaderToUse->setMat4("view", currentCam->getViewMatrix());
+
+    return shaderToUse;
+}
+

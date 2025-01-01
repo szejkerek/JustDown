@@ -173,7 +173,7 @@ public:
         std::cout << "Buffers setup complete." << std::endl;
     }
 
-    void render(Shader& shaderProgram) const {
+    void render(std::shared_ptr<Shader> shaderProgram) const {
         glm::mat4 modelMatrix = glm::mat4(1.0f);
         modelMatrix = glm::translate(modelMatrix, position);
         modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -181,15 +181,15 @@ public:
         modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
         modelMatrix = glm::scale(modelMatrix, scale);
 
-        shaderProgram.setMat4("transform", modelMatrix);
+        shaderProgram->setMat4("transform", modelMatrix);
 
         if (texture0 && texture0->isLoaded) {
-            shaderProgram.setInt("texture1", 0);
+            shaderProgram->setInt("texture1", 0);
             texture0->bind(0);
         }
 
         if (texture1 && texture1->isLoaded) {
-            shaderProgram.setInt("texture2", 1);
+            shaderProgram->setInt("texture2", 1);
             texture1->bind(1);
         }
 
@@ -217,10 +217,10 @@ public:
 
     void setTexture(int pos, const std::string& path) {
         if (pos == 0) {
-            texture0 = std::make_unique<Texture>(path, GL_TEXTURE_2D);
+            texture0 = std::make_shared<Texture>(path, GL_TEXTURE_2D);
         }
         else if (pos == 1) {
-            texture1 = std::make_unique<Texture>(path, GL_TEXTURE_2D);
+            texture1 = std::make_shared<Texture>(path, GL_TEXTURE_2D);
         }
         else {
             std::cout << "Wrong texture pos" << std::endl;

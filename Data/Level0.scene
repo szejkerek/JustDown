@@ -1,0 +1,9 @@
+Model Data/Pistol/pistol.obj
+Texture0 Data/Pistol/pistol.png
+Position 0.3 0 2.5
+Rotation 0 -45 0
+Scale 3 3 3
+Model Data/Pistol/pistol.obj
+Position -0.1 0 2.5
+Rotation 0 90 0
+Scale 2 2 2
