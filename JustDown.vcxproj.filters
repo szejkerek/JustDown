@@ -24,9 +24,6 @@
     <ClCompile Include="lib\glm\detail\glm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="lib\glm\glm.cppm">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Shader.h">
       <Filter>Source Files</Filter>
     </ClCompile>

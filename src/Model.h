@@ -1,16 +1,16 @@
 #pragma once
 
+#include <glad/gl.h>
 #include <iostream>
 #include <vector>
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <memory>
+#include "Texture.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "glad/gl.h"
-#include "Texture.h"
-#include <memory>
 
 struct Vertex {
     float x, y, z;
@@ -127,7 +127,7 @@ public:
                 vertexData.push_back(v.y);
                 vertexData.push_back(v.z);
 
-                if (face.t[i] >= 0 && face.t[i] < texCoords.size()) {
+                if (face.t[i] >= 0 && static_cast<size_t>(face.t[i]) < texCoords.size()) {  // Cast to size_t
                     const auto& tc = texCoords[face.t[i]];
                     vertexData.push_back(tc.u);
                     vertexData.push_back(tc.v);
@@ -137,7 +137,7 @@ public:
                     vertexData.push_back(0.0f);
                 }
 
-                if (face.n[i] >= 0 && face.n[i] < normals.size()) {
+                if (face.n[i] >= 0 && static_cast<size_t>(face.n[i]) < normals.size()) {  // Cast to size_t
                     const auto& n = normals[face.n[i]];
                     vertexData.push_back(n.x);
                     vertexData.push_back(n.y);
@@ -148,6 +148,7 @@ public:
                     vertexData.push_back(0.0f);
                     vertexData.push_back(0.0f);
                 }
+
             }
         }
 

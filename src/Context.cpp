@@ -61,10 +61,11 @@ float lastFrame = 0.0f;
 
 float calculateDeltatime()
 {
-    float currentFrame = glfwGetTime();
-    float del = currentFrame - lastFrame; // Correct order of subtraction
+    float currentFrame = static_cast<float>(glfwGetTime());  // Cast glfwGetTime() to float
+    float del = currentFrame - lastFrame;  // Correct order of subtraction
     lastFrame = currentFrame;
     return del;
 }
+
 
 

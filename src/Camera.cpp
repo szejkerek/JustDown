@@ -45,15 +45,15 @@ void Camera::mouseCallback(double xpos, double ypos) {
     if (!freeFlyMode) return;
 
     if (firstMouse) {
-        lastX = xpos;
-        lastY = ypos;
+        lastX = static_cast<float>(xpos);  // Cast xpos to float
+        lastY = static_cast<float>(ypos);  // Cast ypos to float
         firstMouse = false;
     }
 
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos;
-    lastX = xpos;
-    lastY = ypos;
+    float xoffset = static_cast<float>(xpos - lastX);  // Cast xpos - lastX to float
+    float yoffset = static_cast<float>(lastY - ypos);  // Cast lastY - ypos to float
+    lastX = static_cast<float>(xpos);  // Cast xpos to float
+    lastY = static_cast<float>(ypos);  // Cast ypos to float
 
     const float sensitivity = 0.1f;
     xoffset *= sensitivity;
@@ -73,6 +73,7 @@ void Camera::mouseCallback(double xpos, double ypos) {
     direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
     front = glm::normalize(direction);
 }
+
 
 glm::mat4 Camera::getViewMatrix() const {
     if (freeFlyMode)

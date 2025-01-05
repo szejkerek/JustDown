@@ -2,9 +2,9 @@
 #define TEXTURE_H
 
 #include <glad/gl.h>
-#include "stb_image.h"
 #include <string>
 #include <iostream>
+#include "stb_image.h"
 
 class Texture {
 public:
