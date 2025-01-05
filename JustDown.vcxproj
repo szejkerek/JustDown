@@ -150,6 +150,8 @@
     <ClCompile Include="src\gl.c" />
     <ClCompile Include="src\Shader.h" />
     <ClCompile Include="lib\stb_image.cpp" />
+    <ClCompile Include="src\Skybox.cpp" />
+    <ClCompile Include="src\Skybox.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\Users\maton\Downloads\stb_image.h" />
@@ -704,6 +706,8 @@
     <None Include="src\Shaders\Test\FragmentShader.fs" />
     <None Include="src\Shaders\Test\VertexShader.vs" />
     <None Include="src\Shaders\TexturedShader\FragmentShader.fs" />
+    <None Include="src\Shaders\TexturedShader\skybox_fragment.fs" />
+    <None Include="src\Shaders\TexturedShader\skybox_vertex.vs" />
     <None Include="src\Shaders\TexturedShader\VertexShader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -36,6 +36,12 @@
     <ClCompile Include="lib\stb_image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Skybox.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Skybox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\GLFW\include\GLFW\glfw3.h">
@@ -1675,5 +1681,7 @@
     <None Include="src\Shaders\ColoredShader\VertexShader.vs" />
     <None Include="src\Shaders\Test\FragmentShader.fs" />
     <None Include="src\Shaders\Test\VertexShader.vs" />
+    <None Include="src\Shaders\TexturedShader\skybox_vertex.vs" />
+    <None Include="src\Shaders\TexturedShader\skybox_fragment.fs" />
   </ItemGroup>
 </Project>
