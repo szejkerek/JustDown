@@ -17,9 +17,9 @@ public:
     std::shared_ptr<Shader> GetShader(const Model& model) const;
 
 private:
+    
     std::shared_ptr<Camera> currentCam;
     glm::mat4 projection;
-    Model model;
     std::vector<Model> sceneModels;
     std::shared_ptr<Shader> texturedShader;
     std::shared_ptr<Shader> coloredShader;
@@ -45,18 +45,19 @@ bool Scene::loadFromFile(const std::string& filePath)
         std::cerr << "Failed to open scene file: " << filePath << std::endl;
         return false;
     }
-
-    std::string line;
     
+    std::string line;
     while (std::getline(file, line))
     {
         std::istringstream lineStream(line);
         std::string command;
         lineStream >> command;
-
+        
         if (command == "Model")
-        {
+        {   
             
+
+            Model model;
             std::string modelPath;
             lineStream >> modelPath;
 
@@ -67,7 +68,7 @@ bool Scene::loadFromFile(const std::string& filePath)
             }
 
             sceneModels.push_back(std::move(model));
-            sceneModels.back().setupBuffers();
+            //sceneModels.back().setupBuffers();
         }
         else if (command == "Texture0")
         {
@@ -135,10 +136,10 @@ bool Scene::loadFromFile(const std::string& filePath)
         }
     }
 
-    //for (auto& model : sceneModels)
-    //{
-    //    model.setupBuffers();
-    //}
+    for (auto& model : sceneModels)
+    {
+        model.setupBuffers();
+    }
 
 
     file.close();
