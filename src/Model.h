@@ -35,6 +35,11 @@ enum ModelType
     DoubleTextured = 2
 };
 
+struct AABB {
+    glm::vec3 min;
+    glm::vec3 max;
+};
+
 
 class Model {
 public:
@@ -50,6 +55,8 @@ public:
     glm::vec3 position = glm::vec3(0.0f); // Position of the model
     glm::vec3 rotation = glm::vec3(0.0f); // Rotation (in degrees)
     glm::vec3 scale = glm::vec3(1.0f);    // Scale of the model (default is 1.0 for uniform scaling)
+
+    AABB aabb;
 
     Model() = default;
 
@@ -110,10 +117,42 @@ public:
 
         file.close();
        // setupBuffers();
-
+        calculateAABB();
        
 
         return true;
+    }
+
+    void calculateAABB() {
+        glm::vec3 min = glm::vec3(std::numeric_limits<float>::max());
+        glm::vec3 max = glm::vec3(std::numeric_limits<float>::lowest());
+
+        // Calculate local-space AABB
+        for (const auto& vertex : vertices) {
+            min.x = std::min(min.x, vertex.x);
+            min.y = std::min(min.y, vertex.y);
+            min.z = std::min(min.z, vertex.z);
+
+            max.x = std::max(max.x, vertex.x);
+            max.y = std::max(max.y, vertex.y);
+            max.z = std::max(max.z, vertex.z);
+        }
+
+        aabb = { min, max };
+    }
+
+    AABB getTransformedAABB() const {
+        glm::mat4 modelMatrix = glm::mat4(1.0f);
+        modelMatrix = glm::translate(modelMatrix, position);
+        modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+        modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+        modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+        modelMatrix = glm::scale(modelMatrix, scale);
+
+        glm::vec3 transformedMin = glm::vec3(modelMatrix * glm::vec4(aabb.min, 1.0f));
+        glm::vec3 transformedMax = glm::vec3(modelMatrix * glm::vec4(aabb.max, 1.0f));
+
+        return { transformedMin, transformedMax };
     }
 
     void setupBuffers() {
@@ -205,6 +244,99 @@ public:
             texture1->unbind();
         }
     }
+
+    void renderAABB(const glm::mat4& projectionMatrix, const glm::mat4& viewMatrix, std::shared_ptr<Shader> shaderProgram) const {
+        // Get the transformed AABB
+        AABB transformedAABB = getTransformedAABB();
+
+        // Construct the model matrix
+        glm::mat4 modelMatrix = glm::mat4(1.0f);
+
+        glm::vec3 corners[8] = {
+        transformedAABB.min,
+        glm::vec3(transformedAABB.max.x, transformedAABB.min.y, transformedAABB.min.z),
+        glm::vec3(transformedAABB.min.x, transformedAABB.max.y, transformedAABB.min.z),
+        glm::vec3(transformedAABB.max.x, transformedAABB.max.y, transformedAABB.min.z),
+        glm::vec3(transformedAABB.min.x, transformedAABB.min.y, transformedAABB.max.z),
+        glm::vec3(transformedAABB.max.x, transformedAABB.min.y, transformedAABB.max.z),
+        glm::vec3(transformedAABB.min.x, transformedAABB.max.y, transformedAABB.max.z),
+        transformedAABB.max
+        };
+
+        // Define the indices for the wireframe lines
+        GLuint indices[24] = {
+            0, 1, 1, 3, 3, 2, 2, 0, // Bottom face
+            4, 5, 5, 7, 7, 6, 6, 4, // Top face
+            0, 4, 1, 5, 3, 7, 2, 6  // Vertical lines
+        };
+
+        // Define offsets for readability
+        constexpr int POSITION_OFFSET = 0;      // x, y, z
+        constexpr int TEXCOORD_OFFSET = 3;     // u, v
+        constexpr int COLOR_OFFSET = 5;        // r, g, b
+        constexpr int STRIDE = 8;              // Total attributes per vertex
+
+        std::vector<float> lineVertices;
+
+        // Fill vertex data
+        for (int i = 0; i < 24; i++) {
+            glm::vec3 corner = corners[indices[i]];
+            lineVertices.push_back(corner.x);   // Position X
+            lineVertices.push_back(corner.y);   // Position Y
+            lineVertices.push_back(corner.z);   // Position Z
+            lineVertices.push_back(0.0f);       // Texture Coord U (if unused, skip)
+            lineVertices.push_back(0.0f);       // Texture Coord V (if unused, skip)
+            lineVertices.push_back(0.0f);       // Color R
+            lineVertices.push_back(1.0f);       // Color G
+            lineVertices.push_back(0.0f);       // Color B
+        }
+
+        // Setup OpenGL buffers
+        GLuint lineVAO, lineVBO;
+        glGenVertexArrays(1, &lineVAO);
+        glGenBuffers(1, &lineVBO);
+
+        // Bind VAO
+        glBindVertexArray(lineVAO);
+
+        // Bind and fill VBO
+        glBindBuffer(GL_ARRAY_BUFFER, lineVBO);
+        glBufferData(GL_ARRAY_BUFFER, lineVertices.size() * sizeof(float), lineVertices.data(), GL_STATIC_DRAW);
+
+        // Set vertex attribute pointers
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, STRIDE * sizeof(float), (void*)(POSITION_OFFSET * sizeof(float)));
+        glEnableVertexAttribArray(0); // Enable position attribute
+
+        // If texture coordinates are unused, comment out the following two lines
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, STRIDE * sizeof(float), (void*)(TEXCOORD_OFFSET * sizeof(float)));
+        glEnableVertexAttribArray(1); // Enable texture coord attribute
+
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, STRIDE * sizeof(float), (void*)(COLOR_OFFSET * sizeof(float)));
+        glEnableVertexAttribArray(2); // Enable color attribute
+
+        // Unbind VAO to avoid accidental changes
+        glBindVertexArray(0);
+
+        // Optional: Unbind VBO (good practice, not strictly necessary)
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        // Activate the shader and set uniforms
+        shaderProgram->use();
+        shaderProgram->setMat4("projection", projectionMatrix);
+        shaderProgram->setMat4("view", viewMatrix);
+        shaderProgram->setMat4("transform", modelMatrix);
+
+        // Render the AABB lines
+        glBindVertexArray(lineVAO);
+        glLineWidth(2.0f);
+        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(lineVertices.size() / 6));
+        glBindVertexArray(0);
+
+        // Cleanup OpenGL buffers
+        glDeleteVertexArrays(1, &lineVAO);
+        glDeleteBuffers(1, &lineVBO);
+    }
+
 
 
     ~Model() {

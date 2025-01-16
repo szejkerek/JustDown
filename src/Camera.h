@@ -9,6 +9,7 @@ public:
     glm::vec3 front;
     glm::vec3 up;
     bool freeFlyMode;
+    bool showOnlyColliders;
     float yaw;
     float pitch;
     float lastX;
@@ -22,6 +23,7 @@ public:
         front(other.front),
         up(other.up),
         freeFlyMode(other.freeFlyMode),
+        showOnlyColliders(other.showOnlyColliders),
         yaw(other.yaw),
         pitch(other.pitch),
         lastX(other.lastX),

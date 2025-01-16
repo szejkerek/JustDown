@@ -185,7 +185,13 @@ void Scene::render(Camera& camera) const
     
     for (const auto& model : sceneModels)
     {
-        model.render(GetShader(model,camera));
+        if (camera.showOnlyColliders) {
+            model.renderAABB(projection, camera.getViewMatrix(), coloredShader);
+        }
+        else
+        {
+            model.render(GetShader(model,camera));     
+        }
     }
 }
 

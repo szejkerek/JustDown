@@ -4,7 +4,7 @@
 #include <iostream>
 
 Camera::Camera(glm::vec3 startPosition, glm::vec3 startFront, glm::vec3 startUp)
-    : position(startPosition), front(startFront), up(startUp), freeFlyMode(false),
+    : position(startPosition), front(startFront), up(startUp), freeFlyMode(false), showOnlyColliders(false),
     yaw(-90.0f), pitch(0.0f), lastX(400), lastY(300), firstMouse(true), lastFrame(0.0f),
     keyPressed(false), savedPosition(startPosition), savedFront(startFront) {
 }
@@ -29,6 +29,9 @@ void Camera::processInput(GLFWwindow* window, float deltaTime) {
     if (glfwGetKey(window, GLFW_KEY_O) == GLFW_RELEASE) {
         keyPressed = false;
     }
+
+    showOnlyColliders = (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS);
+
 
     if (freeFlyMode) {
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
