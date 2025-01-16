@@ -14,6 +14,7 @@ class Scene
 public:
     Scene(glm::mat4 projection);
     bool loadFromFile(const std::string& filePath);
+    void update(float deltaTime);
     void render(Camera& camera) const;
 
     std::shared_ptr<Shader> GetShader(const Model& model, Camera& camera) const;
@@ -165,6 +166,11 @@ bool Scene::loadFromFile(const std::string& filePath)
     return true;
 }
 
+void Scene::update(float deltaTime = 0.0f)
+{
+    sceneModels[0].setPosition(sceneModels[0].position.x, sceneModels[0].position.y - 1.0 * deltaTime, sceneModels[0].position.z);
+}
+
 void Scene::render(Camera& camera) const
 {
     // Render the skybox first to ensure it is behind everything
@@ -181,8 +187,7 @@ void Scene::render(Camera& camera) const
         glEnable(GL_DEPTH_TEST);  // Re-enable depth testing for the rest of the scene
     }
 
-    // Then render the scene models
-    
+
     for (const auto& model : sceneModels)
     {
         if (camera.showOnlyColliders) {
