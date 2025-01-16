@@ -12,16 +12,15 @@
 class Scene
 {
 public:
-    Scene(glm::mat4 projection, Camera &cam);
+    Scene(glm::mat4 projection);
     bool loadFromFile(const std::string& filePath);
-    void render() const;
+    void render(Camera& camera) const;
 
-    std::shared_ptr<Shader> GetShader(const Model& model) const;
+    std::shared_ptr<Shader> GetShader(const Model& model, Camera& camera) const;
     void setSkybox(const std::vector<std::string>& skyboxTextures);
 
 private:
-    
-    std::shared_ptr<Camera> currentCam;
+
     glm::mat4 projection;
     std::vector<Model> sceneModels;
     std::shared_ptr<Shader> texturedShader;
@@ -30,7 +29,7 @@ private:
     std::shared_ptr<Skybox> skybox;
 };
 
-Scene::Scene(glm::mat4 projection, Camera& cam)
+Scene::Scene(glm::mat4 projection)
     : texturedShader(std::make_shared<Shader>(
         "src/Shaders/TexturedShader/VertexShader.vs",
         "src/Shaders/TexturedShader/FragmentShader.fs")),
@@ -39,7 +38,6 @@ Scene::Scene(glm::mat4 projection, Camera& cam)
         "src/Shaders/ColoredShader/FragmentShader.fs")),
     projection(projection)
 {
-    currentCam = std::make_shared<Camera>(cam);
 
     skyboxShader = std::make_shared<Shader>(
         "src/Shaders/SkyboxShader/VertexShader.vs",
@@ -167,7 +165,7 @@ bool Scene::loadFromFile(const std::string& filePath)
     return true;
 }
 
-void Scene::render() const
+void Scene::render(Camera& camera) const
 {
     // Render the skybox first to ensure it is behind everything
     if (skybox)
@@ -177,7 +175,7 @@ void Scene::render() const
 
         skyboxShader->use();
         skyboxShader->setMat4("projection", projection);
-        skyboxShader->setMat4("view", glm::mat4(glm::mat3(currentCam->getViewMatrix())));  // Remove translation from view matrix
+        skyboxShader->setMat4("view", glm::mat4(glm::mat3(camera.getViewMatrix())));  // Remove translation from view matrix
         skybox->render(skyboxShader);
 
         glEnable(GL_DEPTH_TEST);  // Re-enable depth testing for the rest of the scene
@@ -187,11 +185,11 @@ void Scene::render() const
     
     for (const auto& model : sceneModels)
     {
-        model.render(GetShader(model));
+        model.render(GetShader(model,camera));
     }
 }
 
-std::shared_ptr<Shader> Scene::GetShader(const Model& model) const
+std::shared_ptr<Shader> Scene::GetShader(const Model& model, Camera& camera) const
 {
     std::shared_ptr<Shader> shaderToUse;
 
@@ -213,7 +211,7 @@ std::shared_ptr<Shader> Scene::GetShader(const Model& model) const
     // Common setup for the shader
     shaderToUse->use();
     shaderToUse->setMat4("projection", projection);
-    shaderToUse->setMat4("view", currentCam->getViewMatrix());
+    shaderToUse->setMat4("view", camera.getViewMatrix());
 
     return shaderToUse;
 }

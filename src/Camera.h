@@ -17,6 +17,21 @@ public:
     float lastFrame;
 
     Camera(glm::vec3 startPosition, glm::vec3 startFront, glm::vec3 startUp);
+    Camera(const Camera& other)
+        : position(other.position),
+        front(other.front),
+        up(other.up),
+        freeFlyMode(other.freeFlyMode),
+        yaw(other.yaw),
+        pitch(other.pitch),
+        lastX(other.lastX),
+        lastY(other.lastY),
+        firstMouse(other.firstMouse),
+        lastFrame(other.lastFrame),
+        savedPosition(other.savedPosition),
+        savedFront(other.savedFront),
+        keyPressed(other.keyPressed) {
+    }
 
     void processInput(GLFWwindow* window, float deltaTime);
     void mouseCallback(double xpos, double ypos);

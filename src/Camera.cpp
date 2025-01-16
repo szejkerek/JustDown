@@ -10,7 +10,7 @@ Camera::Camera(glm::vec3 startPosition, glm::vec3 startFront, glm::vec3 startUp)
 }
 
 void Camera::processInput(GLFWwindow* window, float deltaTime) {
-    float cameraSpeed = 25.0f * deltaTime;
+    float cameraSpeed = 2.5f * deltaTime;
 
     if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS && !keyPressed) {
         freeFlyMode = !freeFlyMode;

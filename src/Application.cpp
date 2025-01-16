@@ -46,7 +46,7 @@ int main()
     glEnable(GL_DEPTH_TEST);
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
-    Scene scene(projection, camera);
+    Scene scene(projection);
     scene.loadFromFile("Data/Level0.scene");
 
     while (!glfwWindowShouldClose(window))
@@ -55,7 +55,7 @@ int main()
         deltaTime = calculateDeltatime();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        scene.render();
+        scene.render(camera);
         glfwSwapBuffers(window);
         glfwPollEvents();
 
