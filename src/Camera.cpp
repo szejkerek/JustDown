@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <iostream>
 
 Camera::Camera(glm::vec3 startPosition, glm::vec3 startFront, glm::vec3 startUp)
     : position(startPosition), front(startFront), up(startUp), freeFlyMode(false),
@@ -9,11 +10,11 @@ Camera::Camera(glm::vec3 startPosition, glm::vec3 startFront, glm::vec3 startUp)
 }
 
 void Camera::processInput(GLFWwindow* window, float deltaTime) {
-    float cameraSpeed = 2.5f * deltaTime;
+    float cameraSpeed = 25.0f * deltaTime;
 
     if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS && !keyPressed) {
         freeFlyMode = !freeFlyMode;
-
+        std::cout << "Flymode: " << freeFlyMode << std::endl;
         if (!freeFlyMode) {
             position = savedPosition;
             front = savedFront;
@@ -39,6 +40,7 @@ void Camera::processInput(GLFWwindow* window, float deltaTime) {
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
             position += glm::normalize(glm::cross(front, up)) * cameraSpeed;
     }
+    
 }
 
 void Camera::mouseCallback(double xpos, double ypos) {

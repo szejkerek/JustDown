@@ -10,12 +10,45 @@ Skybox::Skybox(const std::vector<std::string>& faces)
         // Positions
         -1.0f,  1.0f, -1.0f,
         -1.0f, -1.0f, -1.0f,
-        1.0f, -1.0f, -1.0f,
-        1.0f,  1.0f, -1.0f,
-        -1.0f,  1.0f,  1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+
         -1.0f, -1.0f,  1.0f,
-        1.0f, -1.0f,  1.0f,
-        1.0f,  1.0f,  1.0f
+        -1.0f, -1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+        -1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f
     };
 
     glGenVertexArrays(1, &VAO);
@@ -31,7 +64,6 @@ Skybox::Skybox(const std::vector<std::string>& faces)
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    skyboxShader = std::make_shared<Shader>("src/Shaders/SkyboxShader/VertexShader.vs", "src/Shaders/SkyboxShader/FragmentShader.fs");
 }
 
 void Skybox::loadCubemap(const std::vector<std::string>& faces)
@@ -62,9 +94,9 @@ void Skybox::loadCubemap(const std::vector<std::string>& faces)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 }
 
-void Skybox::render() const
+void Skybox::render(std::shared_ptr<Shader> shaderProgram) const
 {
-    glUseProgram(skyboxShader->ID);  // Ensure you're using the right shader
+    glUseProgram(shaderProgram->ID);  // Ensure you're using the right shader
     glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);  // Bind the cubemap texture
 
     glBindVertexArray(VAO);  // Bind the VAO

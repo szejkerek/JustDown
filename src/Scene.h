@@ -1,8 +1,35 @@
-#include "Scene.h"
-#include "Skybox.h"
-#include <stb_image.h>  // Make sure stb_image is included for texture loading
+#pragma once
 
-// Constructor to initialize the shaders and skybox shader
+#include <vector>
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <iostream>
+#include "Model.h"
+#include "Model.h"
+#include "Skybox.h"
+
+class Scene
+{
+public:
+    Scene(glm::mat4 projection, Camera &cam);
+    bool loadFromFile(const std::string& filePath);
+    void render() const;
+
+    std::shared_ptr<Shader> GetShader(const Model& model) const;
+    void setSkybox(const std::vector<std::string>& skyboxTextures);
+
+private:
+    
+    std::shared_ptr<Camera> currentCam;
+    glm::mat4 projection;
+    std::vector<Model> sceneModels;
+    std::shared_ptr<Shader> texturedShader;
+    std::shared_ptr<Shader> coloredShader;
+    std::shared_ptr<Shader> skyboxShader;
+    std::shared_ptr<Skybox> skybox;
+};
+
 Scene::Scene(glm::mat4 projection, Camera& cam)
     : texturedShader(std::make_shared<Shader>(
         "src/Shaders/TexturedShader/VertexShader.vs",
@@ -27,19 +54,18 @@ bool Scene::loadFromFile(const std::string& filePath)
         std::cerr << "Failed to open scene file: " << filePath << std::endl;
         return false;
     }
-
+    
     std::string line;
     while (std::getline(file, line))
     {
-        // Trim whitespace around the line
-        if (line.empty()) continue;  // Skip empty lines
-
         std::istringstream lineStream(line);
         std::string command;
         lineStream >> command;
-
+        
         if (command == "Model")
-        {
+        {   
+            
+
             Model model;
             std::string modelPath;
             lineStream >> modelPath;
@@ -51,6 +77,7 @@ bool Scene::loadFromFile(const std::string& filePath)
             }
 
             sceneModels.push_back(std::move(model));
+            //sceneModels.back().setupBuffers();
         }
         else if (command == "Texture0")
         {
@@ -63,6 +90,18 @@ bool Scene::loadFromFile(const std::string& filePath)
             std::string texturePath;
             lineStream >> texturePath;
             sceneModels.back().setTexture(0, texturePath);
+        }
+        else if (command == "Texture1")
+        {
+            if (sceneModels.empty())
+            {
+                std::cerr << "Texture1 command before any Model command." << std::endl;
+                continue;
+            }
+
+            std::string texturePath;
+            lineStream >> texturePath;
+            sceneModels.back().setTexture(1, texturePath);
         }
         else if (command == "Position")
         {
@@ -106,7 +145,9 @@ bool Scene::loadFromFile(const std::string& filePath)
             // Read the next 6 texture paths for the skybox
             for (int i = 0; i < 6; ++i)
             {
-                lineStream >> skyboxTextures[i];
+                std::getline(file, line);
+                std::istringstream lineStreamTMP(line);
+                lineStreamTMP >> skyboxTextures[i];
             }
             setSkybox(skyboxTextures);  // Set the skybox textures
         }
@@ -120,6 +161,7 @@ bool Scene::loadFromFile(const std::string& filePath)
     {
         model.setupBuffers();
     }
+
 
     file.close();
     return true;
@@ -136,12 +178,13 @@ void Scene::render() const
         skyboxShader->use();
         skyboxShader->setMat4("projection", projection);
         skyboxShader->setMat4("view", glm::mat4(glm::mat3(currentCam->getViewMatrix())));  // Remove translation from view matrix
-        skybox->render();
+        skybox->render(skyboxShader);
 
         glEnable(GL_DEPTH_TEST);  // Re-enable depth testing for the rest of the scene
     }
 
     // Then render the scene models
+    
     for (const auto& model : sceneModels)
     {
         model.render(GetShader(model));
@@ -152,6 +195,7 @@ std::shared_ptr<Shader> Scene::GetShader(const Model& model) const
 {
     std::shared_ptr<Shader> shaderToUse;
 
+    // Determine the shader to use based on the model type
     switch (model.modelType)
     {
     case Colored:
@@ -166,6 +210,7 @@ std::shared_ptr<Shader> Scene::GetShader(const Model& model) const
         break;
     }
 
+    // Common setup for the shader
     shaderToUse->use();
     shaderToUse->setMat4("projection", projection);
     shaderToUse->setMat4("view", currentCam->getViewMatrix());
@@ -177,3 +222,4 @@ void Scene::setSkybox(const std::vector<std::string>& skyboxTextures)
 {
     skybox = std::make_shared<Skybox>(skyboxTextures);
 }
+
