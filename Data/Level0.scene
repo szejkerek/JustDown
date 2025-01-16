@@ -9,7 +9,19 @@ Data/Geometry/cube.png
 Model Data/Geometry/cube.obj
 Texture0 Data/Geometry/cube.png
 Position 0 0 0
+Rotation 0 40 0
+Scale .5 .5 .5
+
+Model Data/Geometry/cube.obj
+Texture0 Data/Geometry/cube.png
+Position -2.0 0 0
 Rotation 0 20 0
+Scale .5 .5 .5
+
+Model Data/Geometry/cube.obj
+Texture0 Data/Geometry/cube.png
+Position -4.0 0 0
+Rotation 0 0 0
 Scale .5 .5 .5
 
 Model Data/Pistol/pistol.obj

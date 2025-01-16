@@ -149,8 +149,27 @@ public:
         modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
         modelMatrix = glm::scale(modelMatrix, scale);
 
-        glm::vec3 transformedMin = glm::vec3(modelMatrix * glm::vec4(aabb.min, 1.0f));
-        glm::vec3 transformedMax = glm::vec3(modelMatrix * glm::vec4(aabb.max, 1.0f));
+        // Compute all 8 vertices of the local-space AABB
+        glm::vec3 vertices[8] = {
+            glm::vec3(aabb.min.x, aabb.min.y, aabb.min.z),
+            glm::vec3(aabb.min.x, aabb.min.y, aabb.max.z),
+            glm::vec3(aabb.min.x, aabb.max.y, aabb.min.z),
+            glm::vec3(aabb.min.x, aabb.max.y, aabb.max.z),
+            glm::vec3(aabb.max.x, aabb.min.y, aabb.min.z),
+            glm::vec3(aabb.max.x, aabb.min.y, aabb.max.z),
+            glm::vec3(aabb.max.x, aabb.max.y, aabb.min.z),
+            glm::vec3(aabb.max.x, aabb.max.y, aabb.max.z),
+        };
+
+        glm::vec3 transformedMin = glm::vec3(std::numeric_limits<float>::max());
+        glm::vec3 transformedMax = glm::vec3(std::numeric_limits<float>::lowest());
+
+        // Transform each vertex and compute the new AABB
+        for (const auto& vertex : vertices) {
+            glm::vec3 transformedVertex = glm::vec3(modelMatrix * glm::vec4(vertex, 1.0f));
+            transformedMin = glm::min(transformedMin, transformedVertex);
+            transformedMax = glm::max(transformedMax, transformedVertex);
+        }
 
         return { transformedMin, transformedMax };
     }
