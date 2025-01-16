@@ -15,9 +15,9 @@ public:
     Scene(glm::mat4 projection);
     bool loadFromFile(const std::string& filePath);
     void update(float deltaTime);
-    void render(Camera& camera) const;
+    void render(std::shared_ptr <Camera>& camera) const;
 
-    std::shared_ptr<Shader> GetShader(const Model& model, Camera& camera) const;
+    std::shared_ptr<Shader> GetShader(const Model& model, std::shared_ptr <Camera>& camera) const;
     void setSkybox(const std::vector<std::string>& skyboxTextures);
 
 private:
@@ -168,10 +168,13 @@ bool Scene::loadFromFile(const std::string& filePath)
 
 void Scene::update(float deltaTime = 0.0f)
 {
-    sceneModels[0].setPosition(sceneModels[0].position.x, sceneModels[0].position.y - 1.0 * deltaTime, sceneModels[0].position.z);
+    if (!Model::checkCollision(sceneModels[0].getTransformedAABB(), sceneModels[1].getTransformedAABB()))
+    {
+        sceneModels[0].setPosition(sceneModels[0].position.x, sceneModels[0].position.y - 1.0 * deltaTime, sceneModels[0].position.z);
+    }
 }
 
-void Scene::render(Camera& camera) const
+void Scene::render(std::shared_ptr <Camera>& camera) const
 {
     // Render the skybox first to ensure it is behind everything
     if (skybox)
@@ -181,7 +184,7 @@ void Scene::render(Camera& camera) const
 
         skyboxShader->use();
         skyboxShader->setMat4("projection", projection);
-        skyboxShader->setMat4("view", glm::mat4(glm::mat3(camera.getViewMatrix())));  // Remove translation from view matrix
+        skyboxShader->setMat4("view", glm::mat4(glm::mat3(camera->getViewMatrix())));  // Remove translation from view matrix
         skybox->render(skyboxShader);
 
         glEnable(GL_DEPTH_TEST);  // Re-enable depth testing for the rest of the scene
@@ -190,8 +193,8 @@ void Scene::render(Camera& camera) const
 
     for (const auto& model : sceneModels)
     {
-        if (camera.showOnlyColliders) {
-            model.renderAABB(projection, camera.getViewMatrix(), coloredShader);
+        if (camera->showOnlyColliders) {
+            model.renderAABB(projection, camera->getViewMatrix(), coloredShader);
         }
         else
         {
@@ -200,7 +203,7 @@ void Scene::render(Camera& camera) const
     }
 }
 
-std::shared_ptr<Shader> Scene::GetShader(const Model& model, Camera& camera) const
+std::shared_ptr<Shader> Scene::GetShader(const Model& model, std::shared_ptr <Camera>& camera) const
 {
     std::shared_ptr<Shader> shaderToUse;
 
@@ -222,7 +225,7 @@ std::shared_ptr<Shader> Scene::GetShader(const Model& model, Camera& camera) con
     // Common setup for the shader
     shaderToUse->use();
     shaderToUse->setMat4("projection", projection);
-    shaderToUse->setMat4("view", camera.getViewMatrix());
+    shaderToUse->setMat4("view", camera->getViewMatrix());
 
     return shaderToUse;
 }

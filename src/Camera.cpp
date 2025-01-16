@@ -47,7 +47,8 @@ void Camera::processInput(GLFWwindow* window, float deltaTime) {
 }
 
 void Camera::mouseCallback(double xpos, double ypos) {
-    if (!freeFlyMode) return;
+    //Rzutowanie do XZ
+    //if (!freeFlyMode) return;
 
     if (firstMouse) {
         lastX = static_cast<float>(xpos);  // Cast xpos to float
@@ -81,7 +82,6 @@ void Camera::mouseCallback(double xpos, double ypos) {
 
 
 glm::mat4 Camera::getViewMatrix() const {
-    if (freeFlyMode)
-        return glm::lookAt(position, position + front, up);
-    return glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+   
+    return glm::lookAt(position, position + front, up);
 }

@@ -7,19 +7,23 @@
 #include "Model.h"
 #include "Texture.h"
 #include "Scene.h"
+#include "Player.h"
+
 
 float deltaTime = 0.0f;
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+std::shared_ptr <Camera> camera = std::make_shared<Camera>(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+Player player(camera);
 
 void processInput_callback(GLFWwindow* window)
 {
     processInput(window);
-    camera.processInput(window, deltaTime);
+    camera->processInput(window, deltaTime);
+    player.processInput(window, deltaTime);
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-    camera.mouseCallback(xpos, ypos);
+    camera->mouseCallback(xpos, ypos);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -51,8 +55,11 @@ int main()
 
     while (!glfwWindowShouldClose(window))
     {
-        processInput_callback(window);
         deltaTime = calculateDeltatime();
+        processInput_callback(window);
+        player.applyPhysics(deltaTime);
+
+        camera->position = player.position;
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         scene.update(deltaTime);
         scene.render(camera);

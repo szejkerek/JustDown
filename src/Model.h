@@ -400,4 +400,10 @@ public:
     void setScale(float x, float y, float z) {
         scale = glm::vec3(x, y, z);
     }
+
+    static bool checkCollision(const AABB& box1, const AABB& box2) {
+        return (box1.min.x <= box2.max.x && box1.max.x >= box2.min.x) &&
+            (box1.min.y <= box2.max.y && box1.max.y >= box2.min.y) &&
+            (box1.min.z <= box2.max.z && box1.max.z >= box2.min.z);
+    }
 };
