@@ -52,17 +52,23 @@ int main()
 
     Scene scene(projection);
     scene.loadFromFile("Data/Level0.scene");
+    
+    player.playerModel.loadFromFile("Data/Geometry/cube.obj");
+    player.playerModel.setupBuffers();
+    player.playerModel.setScale(0.2f, 0.7f, 0.1f);
 
     while (!glfwWindowShouldClose(window))
     {
         deltaTime = calculateDeltatime();
         processInput_callback(window);
-        player.applyPhysics(deltaTime);
 
-        camera->position = player.position;
+        if (!camera->freeFlyMode)
+            camera->position = player.playerModel.position + glm::vec3(0.0f, player.playerModel.scale.y+0.4f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         scene.update(deltaTime);
         scene.render(camera);
+        player.applyPhysics(deltaTime, scene);
+        player.render(scene);
         glfwSwapBuffers(window);
         glfwPollEvents();
 

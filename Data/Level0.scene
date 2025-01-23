@@ -13,7 +13,6 @@ Rotation 0 40 0
 Scale .25 .25 .25
 
 Model Data/Geometry/cube.obj
-Texture0 Data/Geometry/cube.png
 Position 0 0 -3
 Rotation 0 20 0
 Scale 1 .5 1

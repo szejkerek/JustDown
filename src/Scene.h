@@ -8,6 +8,7 @@
 #include "Model.h"
 #include "Model.h"
 #include "Skybox.h"
+#include "CollisionResult.h"
 
 class Scene
 {
@@ -15,6 +16,7 @@ public:
     Scene(glm::mat4 projection);
     bool loadFromFile(const std::string& filePath);
     void update(float deltaTime);
+    CollisionResult checkPlayerCollision(Model& playerModel);
     void render(std::shared_ptr <Camera>& camera) const;
 
     std::shared_ptr<Shader> GetShader(const Model& model, std::shared_ptr <Camera>& camera) const;
@@ -172,6 +174,23 @@ void Scene::update(float deltaTime = 0.0f)
     {
         sceneModels[0].setPosition(sceneModels[0].position.x, sceneModels[0].position.y - 1.0 * deltaTime, sceneModels[0].position.z);
     }
+}
+
+CollisionResult Scene::checkPlayerCollision(Model& playerModel) {
+    CollisionResult result = { false, glm::vec3(0.0f) };
+
+    for (Model& model : sceneModels) {
+        if (Model::checkCollision(model.getTransformedAABB(), playerModel.getTransformedAABB())) {
+            result.collided = true;
+
+            // Oblicz normaln¹ kolizji (np. poprzez ró¿nicê pozycji modeli)
+            glm::vec3 direction = playerModel.position - model.position;
+            result.collisionNormal = glm::normalize(direction);
+
+            return result; // Wychodzimy przy pierwszej kolizji
+        }
+    }
+    return result;
 }
 
 void Scene::render(std::shared_ptr <Camera>& camera) const
