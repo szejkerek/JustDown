@@ -8,7 +8,10 @@
 #include "Texture.h"
 #include "Scene.h"
 #include "Player.h"
+#include "../PostProcess.h"
 
+const float width = 800.0f;
+const float height = 600.0f;
 
 float deltaTime = 0.0f;
 std::shared_ptr <Camera> camera = std::make_shared<Camera>(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -36,7 +39,7 @@ int main()
     if (!initGLFW())
         return -1;
 
-    GLFWwindow* window = createWindow(800, 600, "Load OBJ Model");
+    GLFWwindow* window = createWindow(width, height, "Load OBJ Model");
     if (!window)
         return -1;
 
@@ -48,10 +51,14 @@ int main()
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     glEnable(GL_DEPTH_TEST);
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), width / height, 0.1f, 100.0f);
 
     Scene scene(projection);
     scene.loadFromFile("Data/Level0.scene");
+
+    PostProcess postProcess;
+    postProcess.Init(width, height);
+
     
     player.playerModel.loadFromFile("Data/Geometry/cube.obj");
     player.playerModel.setupBuffers();
@@ -64,14 +71,16 @@ int main()
 
         if (!camera->freeFlyMode)
             camera->position = player.playerModel.position + glm::vec3(0.0f, player.playerModel.scale.y+0.4f, 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        postProcess.BeginRender();
+
         scene.update(deltaTime);
         scene.render(camera);
         player.applyPhysics(deltaTime, scene);
         player.render(scene);
+        postProcess.ApplyBloom(1.0f, 0.5f);
+
         glfwSwapBuffers(window);
         glfwPollEvents();
-
     }
 
     glfwTerminate();

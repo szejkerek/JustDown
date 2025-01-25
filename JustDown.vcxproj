@@ -553,6 +553,7 @@
     <ClInclude Include="lib\spdlog\tweakme.h" />
     <ClInclude Include="lib\spdlog\version.h" />
     <ClInclude Include="lib\stb_image.h" />
+    <ClInclude Include="PostProcess.h" />
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\CollisionResult.h" />
     <ClInclude Include="src\Context.h" />
