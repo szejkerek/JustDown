@@ -232,7 +232,7 @@ public:
         std::cout << "Buffers setup complete." << std::endl;
     }
 
-    void render(std::shared_ptr<Shader> shaderProgram) const {
+    void render(std::shared_ptr<Shader> shaderProgram, glm::vec3 viewPos) const {
         glm::mat4 modelMatrix = glm::mat4(1.0f);
         modelMatrix = glm::translate(modelMatrix, position);
         modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -241,6 +241,32 @@ public:
         modelMatrix = glm::scale(modelMatrix, scale);
 
         shaderProgram->setMat4("transform", modelMatrix);
+
+        if (modelType == Colored || modelType == Textured)
+        {
+            glm::vec3 lightColor;
+            lightColor.x = static_cast<float>(sin(glfwGetTime() * 2.0));
+            lightColor.y = static_cast<float>(sin(glfwGetTime() * 0.7));
+            lightColor.z = static_cast<float>(sin(glfwGetTime() * 1.3));
+            glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f); // decrease the influence
+            glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
+
+            shaderProgram->setVec3("viewPos", viewPos);
+
+
+            shaderProgram->setVec3("light.position", 1.0f, 3.0f, 1.0f);
+            shaderProgram->setVec3("light.ambient", ambientColor);
+            shaderProgram->setVec3("light.diffuse", diffuseColor);
+            shaderProgram->setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+
+            shaderProgram->setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
+            shaderProgram->setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+            shaderProgram->setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+            shaderProgram->setFloat("material.shininess", .5f);
+
+          
+        }
+
 
         if (texture0 && texture0->isLoaded) {
             shaderProgram->setInt("texture1", 0);

@@ -74,7 +74,6 @@ void Player::processInput(GLFWwindow* window, float deltaTime) {
         playerModel.rotation.y = glm::degrees(angle); // Obrót wokó³ osi Y
     }
 
-    std::cout << camera->yaw << std::endl;
     velocity.x = inputVelocity.x;
     velocity.z = inputVelocity.z;
 
@@ -126,5 +125,5 @@ void Player::applyPhysics(float deltaTime, Scene& scene) {
 
 void Player::render(Scene& scene)
 {
-    playerModel.render(scene.GetShader(playerModel, camera));
+    playerModel.render(scene.GetShader(playerModel, camera), camera->position);
 }

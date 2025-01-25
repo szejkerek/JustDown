@@ -27,6 +27,7 @@ private:
     glm::mat4 projection;
     std::vector<Model> sceneModels;
     std::shared_ptr<Shader> texturedShader;
+    std::shared_ptr<Shader> doubletexturedShader;
     std::shared_ptr<Shader> coloredShader;
     std::shared_ptr<Shader> skyboxShader;
     std::shared_ptr<Skybox> skybox;
@@ -34,11 +35,14 @@ private:
 
 Scene::Scene(glm::mat4 projection)
     : texturedShader(std::make_shared<Shader>(
-        "src/Shaders/TexturedShader/VertexShader.vs",
-        "src/Shaders/TexturedShader/FragmentShader.fs")),
+        "src/Shaders/LightsTexturedShader/VertexShader.vs",
+        "src/Shaders/LightsTexturedShader/FragmentShader.fs")),
     coloredShader(std::make_shared<Shader>(
-        "src/Shaders/ColoredShader/VertexShader.vs",
-        "src/Shaders/ColoredShader/FragmentShader.fs")),
+        "src/Shaders/LightsShader/VertexShader.vs",
+        "src/Shaders/LightsShader/FragmentShader.fs")),
+    doubletexturedShader(std::make_shared<Shader>(
+        "src/Shaders/DoubleTexturedShader/VertexShader.vs",
+        "src/Shaders/DoubleTexturedShader/FragmentShader.fs")),
     projection(projection)
 {
 
@@ -217,7 +221,7 @@ void Scene::render(std::shared_ptr <Camera>& camera) const
         }
         else
         {
-            model.render(GetShader(model,camera));     
+            model.render(GetShader(model,camera), camera->position);     
         }
     }
 }
@@ -233,8 +237,10 @@ std::shared_ptr<Shader> Scene::GetShader(const Model& model, std::shared_ptr <Ca
         shaderToUse = coloredShader;
         break;
     case Textured:
-    case DoubleTextured:
         shaderToUse = texturedShader;
+        break;
+    case DoubleTextured:
+        shaderToUse = doubletexturedShader;
         break;
     default:
         shaderToUse = coloredShader;

@@ -1689,5 +1689,9 @@
     <None Include="src\Shaders\Test\VertexShader.vs" />
     <None Include="src\Shaders\TexturedShader\skybox_vertex.vs" />
     <None Include="src\Shaders\TexturedShader\skybox_fragment.fs" />
+    <None Include="src\Shaders\LightsShader\FragmentShader.fs" />
+    <None Include="src\Shaders\LightsShader\VertexShader.vs" />
+    <None Include="src\Shaders\LightsTexturedShader\FragmentShader.fs" />
+    <None Include="src\Shaders\LightsTexturedShader\VertexShader.vs" />
   </ItemGroup>
 </Project>
