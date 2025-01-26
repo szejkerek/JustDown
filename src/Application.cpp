@@ -13,13 +13,14 @@
 const float width = 800.0f;
 const float height = 600.0f;
 
+bool postProcessStoped;
 float deltaTime = 0.0f;
 std::shared_ptr <Camera> camera = std::make_shared<Camera>(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 Player player(camera);
 
 void processInput_callback(GLFWwindow* window)
 {
-    processInput(window);
+    postProcessStoped = processInput(window);
     camera->processInput(window, deltaTime);
     player.processInput(window, deltaTime);
 }
@@ -56,13 +57,17 @@ int main()
     Scene scene(projection);
     scene.loadFromFile("Data/Level0.scene");
 
+    std::shared_ptr<Shader> lightShader = std::make_shared<Shader>("src/Shaders/LightShader/VertexShader.vs",
+        "src/Shaders/LightShader/FragmentShader.fs");
+
+
+    player.playerModel.loadFromFile("Data/Geometry/cube.obj");
+    player.playerModel.setupBuffers();
+    player.playerModel.setScale(0.2f, 0.7f, 0.1f);
     PostProcess postProcess;
     postProcess.Init(width, height);
 
     
-    player.playerModel.loadFromFile("Data/Geometry/cube.obj");
-    player.playerModel.setupBuffers();
-    player.playerModel.setScale(0.2f, 0.7f, 0.1f);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -71,13 +76,18 @@ int main()
 
         if (!camera->freeFlyMode)
             camera->position = player.playerModel.position + glm::vec3(0.0f, player.playerModel.scale.y+0.4f, 0.0f);
-        postProcess.BeginRender();
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        if(postProcessStoped)
+            postProcess.BeginRender();
 
         scene.update(deltaTime);
         scene.render(camera);
+
         player.applyPhysics(deltaTime, scene);
         player.render(scene);
-        postProcess.ApplyBloom(1.0f, 0.5f);
+        if (postProcessStoped) 
+            postProcess.ApplyBloom(0.70f, 0.6f);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

@@ -5,6 +5,6 @@
 bool initGLFW();
 GLFWwindow* createWindow(int width, int height, const char* title);
 bool initGLAD();
-void processInput(GLFWwindow* window);
+bool processInput(GLFWwindow* window);
 float calculateDeltatime();
 

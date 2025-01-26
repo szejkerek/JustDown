@@ -45,15 +45,18 @@ bool initGLAD()
     //false
 }
 
-void processInput(GLFWwindow* window)
+
+bool processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
-    {
+    {   
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        return false;
     }
     else
     {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        return true;
     }
 }
 

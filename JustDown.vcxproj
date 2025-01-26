@@ -706,6 +706,8 @@
     <None Include="lib\glm\gtx\wrap.inl" />
     <None Include="src\Shaders\ColoredShader\FragmentShader.fs" />
     <None Include="src\Shaders\ColoredShader\VertexShader.vs" />
+    <None Include="src\Shaders\LightShader\FragmentShader.fs" />
+    <None Include="src\Shaders\LightShader\VertexShader.vs" />
     <None Include="src\Shaders\LightsShader\FragmentShader.fs" />
     <None Include="src\Shaders\LightsShader\VertexShader.vs" />
     <None Include="src\Shaders\LightsTexturedShader\FragmentShader.fs" />

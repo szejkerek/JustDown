@@ -1262,6 +1262,9 @@
     <ClInclude Include="src\CollisionResult.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PostProcess.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\glfw3.lib" />
@@ -1693,5 +1696,7 @@
     <None Include="src\Shaders\LightsShader\VertexShader.vs" />
     <None Include="src\Shaders\LightsTexturedShader\FragmentShader.fs" />
     <None Include="src\Shaders\LightsTexturedShader\VertexShader.vs" />
+    <None Include="src\Shaders\LightShader\FragmentShader.fs" />
+    <None Include="src\Shaders\LightShader\VertexShader.vs" />
   </ItemGroup>
 </Project>
