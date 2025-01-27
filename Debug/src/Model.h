@@ -32,8 +32,7 @@ enum ModelType
 {
     Colored = 0,
     Textured = 1,
-    DoubleTextured = 2,
-    Parallax = 3
+    DoubleTextured = 2
 };
 
 struct AABB {
@@ -51,7 +50,6 @@ public:
     GLuint VAO = 0, VBO = 0;
     std::shared_ptr<Texture> texture0 = nullptr; 
     std::shared_ptr<Texture> texture1 = nullptr;
-    std::shared_ptr<Texture> texture2 = nullptr;
     ModelType modelType;
 
     glm::vec3 position = glm::vec3(0.0f); // Position of the model
@@ -177,119 +175,6 @@ public:
     }
 
     void setupBuffers() {
-
-        if (modelType == Parallax)
-        {
-
-            std::cout << "Setting up buffers... Parallax" << std::endl;
-
-            std::vector<float> vertexData;
-            for (const auto& face : faces) {
-                glm::vec3 pos[3];
-                glm::vec2 tex[3];
-
-                // Pobranie pozycji i wspó³rzêdnych tekstur dla trójk¹ta
-                for (int i = 0; i < 3; ++i) {
-                    pos[i] = glm::vec3(vertices[face.v[i]].x, vertices[face.v[i]].y, vertices[face.v[i]].z);
-                    tex[i] = face.t[i] >= 0 && static_cast<size_t>(face.t[i]) < texCoords.size()
-                        ? glm::vec2(texCoords[face.t[i]].u, texCoords[face.t[i]].v)
-                        : glm::vec2(0.0f);
-                }
-
-                // Obliczanie tangentów i bitangentów
-                glm::vec3 edge1 = pos[1] - pos[0];
-                glm::vec3 edge2 = pos[2] - pos[0];
-                glm::vec2 deltaUV1 = tex[1] - tex[0];
-                glm::vec2 deltaUV2 = tex[2] - tex[0];
-
-                float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
-                glm::vec3 tangent = f * (deltaUV2.y * edge1 - deltaUV1.y * edge2);
-                glm::vec3 bitangent = f * (-deltaUV2.x * edge1 + deltaUV1.x * edge2);
-
-                // Normalizacja tangentów i bitangentów
-                tangent = glm::normalize(tangent);
-                bitangent = glm::normalize(bitangent);
-
-                // Dodawanie danych wierzcho³kowych
-                for (int i = 0; i < 3; ++i) {
-                    const auto& v = vertices[face.v[i]];
-                    vertexData.push_back(v.x);
-                    vertexData.push_back(v.y);
-                    vertexData.push_back(v.z);
-
-                    if (face.t[i] >= 0 && static_cast<size_t>(face.t[i]) < texCoords.size()) {
-                        const auto& tc = texCoords[face.t[i]];
-                        vertexData.push_back(tc.u);
-                        vertexData.push_back(tc.v);
-                    }
-                    else {
-                        vertexData.push_back(0.0f);
-                        vertexData.push_back(0.0f);
-                    }
-
-                    if (face.n[i] >= 0 && static_cast<size_t>(face.n[i]) < normals.size()) {
-                        const auto& n = normals[face.n[i]];
-                        vertexData.push_back(n.x);
-                        vertexData.push_back(n.y);
-                        vertexData.push_back(n.z);
-                    }
-                    else {
-                        vertexData.push_back(0.0f);
-                        vertexData.push_back(0.0f);
-                        vertexData.push_back(0.0f);
-                    }
-
-                    // Tangent i Bitangent
-                    vertexData.push_back(tangent.x);
-                    vertexData.push_back(tangent.y);
-                    vertexData.push_back(tangent.z);
-
-                    vertexData.push_back(bitangent.x);
-                    vertexData.push_back(bitangent.y);
-                    vertexData.push_back(bitangent.z);
-                }
-            }
-
-            glGenVertexArrays(1, &VAO);
-            glGenBuffers(1, &VBO);
-
-            glBindVertexArray(VAO);
-
-            glBindBuffer(GL_ARRAY_BUFFER, VBO);
-            glBufferData(GL_ARRAY_BUFFER, vertexData.size() * sizeof(float), vertexData.data(), GL_STATIC_DRAW);
-
-            // Pozycja wierzcho³ka
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)0);
-            glEnableVertexAttribArray(0);
-
-            // Wspó³rzêdne tekstur
-            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(3 * sizeof(float)));
-            glEnableVertexAttribArray(1);
-
-            // Normalny
-            glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(5 * sizeof(float)));
-            glEnableVertexAttribArray(2);
-
-            // Tangenty
-            glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(8 * sizeof(float)));
-            glEnableVertexAttribArray(3);
-
-            // Bitangenty
-            glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(11 * sizeof(float)));
-            glEnableVertexAttribArray(4);
-
-            glBindVertexArray(0);
-
-            std::cout << "Buffers setup complete." << std::endl;
-            
-
-            
-        }
-        else
-        {
-
- 
-
         std::cout << "Setting up buffers..." << std::endl;
 
         std::vector<float> vertexData;
@@ -345,9 +230,6 @@ public:
         glBindVertexArray(0);
 
         std::cout << "Buffers setup complete." << std::endl;
-       }
-
-
     }
 
     void render(std::shared_ptr<Shader> shaderProgram, glm::vec3 viewPos) const {
@@ -360,7 +242,7 @@ public:
 
         shaderProgram->setMat4("transform", modelMatrix);
 
-        if (modelType == Colored || modelType == Textured || modelType == Parallax)
+        if (modelType == Colored || modelType == Textured)
         {
             glm::vec3 lightColor;
             lightColor.x = static_cast<float>(sin(glfwGetTime() * 2.0));
@@ -381,12 +263,8 @@ public:
             shaderProgram->setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
             shaderProgram->setVec3("material.specular", 0.5f, 0.5f, 0.5f);
             shaderProgram->setFloat("material.shininess", .5f);
-     
-        }
 
-        if (modelType == Parallax)
-        {
-            shaderProgram->setFloat("heightScale", 0.1f);
+          
         }
 
 
@@ -398,11 +276,6 @@ public:
         if (texture1 && texture1->isLoaded) {
             shaderProgram->setInt("texture2", 1);
             texture1->bind(1);
-        }
-
-        if (texture2 && texture2->isLoaded) {
-            shaderProgram->setInt("texture3", 2);
-            texture2->bind(2);
         }
 
         glBindVertexArray(VAO);
@@ -527,20 +400,14 @@ public:
         else if (pos == 1) {
             texture1 = std::make_shared<Texture>(path, GL_TEXTURE_2D);
         }
-        else if (pos == 2) {
-            texture2 = std::make_shared<Texture>(path, GL_TEXTURE_2D);
-        }
         else {
             std::cout << "Wrong texture pos" << std::endl;
         }
 
-        if (texture0 && texture0->isLoaded && texture1 && texture1->isLoaded && texture2 && texture2->isLoaded) {
-            modelType = Parallax;
-        }
-        else if (texture0 && texture0->isLoaded && texture1 && texture1->isLoaded ) {
+        if (texture0 && texture0->isLoaded && texture1 && texture1->isLoaded) {
             modelType = DoubleTextured;
         }
-        else if ((texture0 && texture0->isLoaded) || (texture1 && texture1->isLoaded) ) {
+        else if ((texture0 && texture0->isLoaded) || (texture1 && texture1->isLoaded)) {
             modelType = Textured;
         }
         else {

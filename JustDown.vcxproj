@@ -712,6 +712,8 @@
     <None Include="src\Shaders\LightsShader\VertexShader.vs" />
     <None Include="src\Shaders\LightsTexturedShader\FragmentShader.fs" />
     <None Include="src\Shaders\LightsTexturedShader\VertexShader.vs" />
+    <None Include="src\Shaders\Parallax\FragmentShader.fs" />
+    <None Include="src\Shaders\Parallax\VertexShader.vs" />
     <None Include="src\Shaders\Test\FragmentShader.fs" />
     <None Include="src\Shaders\Test\VertexShader.vs" />
     <None Include="src\Shaders\TexturedShader\FragmentShader.fs" />

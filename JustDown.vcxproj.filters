@@ -1698,5 +1698,7 @@
     <None Include="src\Shaders\LightsTexturedShader\VertexShader.vs" />
     <None Include="src\Shaders\LightShader\FragmentShader.fs" />
     <None Include="src\Shaders\LightShader\VertexShader.vs" />
+    <None Include="src\Shaders\Parallax\FragmentShader.fs" />
+    <None Include="src\Shaders\Parallax\VertexShader.vs" />
   </ItemGroup>
 </Project>

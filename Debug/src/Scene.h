@@ -29,7 +29,6 @@ private:
     std::shared_ptr<Shader> texturedShader;
     std::shared_ptr<Shader> doubletexturedShader;
     std::shared_ptr<Shader> coloredShader;
-    std::shared_ptr<Shader> parallaxShader;
     std::shared_ptr<Shader> skyboxShader;
     std::shared_ptr<Skybox> skybox;
 };
@@ -44,9 +43,6 @@ Scene::Scene(glm::mat4 projection)
     doubletexturedShader(std::make_shared<Shader>(
         "src/Shaders/DoubleTexturedShader/VertexShader.vs",
         "src/Shaders/DoubleTexturedShader/FragmentShader.fs")),
-    parallaxShader(std::make_shared<Shader>(
-        "src/Shaders/Parallax/VertexShader.vs",
-        "src/Shaders/Parallax/FragmentShader.fs")),
     projection(projection)
 {
 
@@ -111,18 +107,6 @@ bool Scene::loadFromFile(const std::string& filePath)
             std::string texturePath;
             lineStream >> texturePath;
             sceneModels.back().setTexture(1, texturePath);
-        }
-        else if (command == "Texture2")
-        {
-            if (sceneModels.empty())
-            {
-                std::cerr << "Texture2 command before any Model command." << std::endl;
-                continue;
-            }
-
-            std::string texturePath;
-            lineStream >> texturePath;
-            sceneModels.back().setTexture(2, texturePath);
         }
         else if (command == "Position")
         {
@@ -260,9 +244,6 @@ std::shared_ptr<Shader> Scene::GetShader(const Model& model, std::shared_ptr <Ca
         break;
     case DoubleTextured:
         shaderToUse = doubletexturedShader;
-        break;
-    case Parallax:
-        shaderToUse = parallaxShader;
         break;
     default:
         shaderToUse = coloredShader;
