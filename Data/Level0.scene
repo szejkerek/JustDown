@@ -53,9 +53,9 @@ Model Data/Geometry/cube.obj
 Texture0 Data/paralax/brick_color.jpg
 Texture1 Data/paralax/brick_normal.jpg
 Texture2 Data/paralax/brick_height.png
-Position 4 4 4
-Rotation 0 40 0
-Scale .25 .25 .25
+Position 0 20 0
+Rotation 0 0 0
+Scale 3 .5 3
 
 
 

@@ -77,7 +77,7 @@ void Player::processInput(GLFWwindow* window, float deltaTime) {
         velocity.y = jumpStrength;
         isGrounded = false;
         fallStartHeight = playerModel.position.y;
-        std::cout << "Start to Fall: " << fallStartHeight << "\n";
+        //std::cout << "Start to Fall: " << fallStartHeight << "\n";
     }
 }
 void Player::applyPhysics(float deltaTime, Scene& scene) {
@@ -90,7 +90,8 @@ void Player::applyPhysics(float deltaTime, Scene& scene) {
 
     CollisionResult collision = scene.checkPlayerCollision(playerModel);
     if (collision.collided) {
-        if (collision.collisionNormal.y > 0.5f) {
+
+        if (collision.collisionNormal.y > 0.f) {
             // Player lands
             if (!isGrounded) {
                 ApplyFallDamage();
@@ -118,7 +119,7 @@ void Player::applyPhysics(float deltaTime, Scene& scene) {
         // Start of the fall
         isGrounded = false;
         fallStartHeight = playerModel.position.y;
-        std::cout << "Start to Fall: " << fallStartHeight << "\n";
+        //std::cout << "Start to Fall: " << fallStartHeight << "\n";
     }
 }
 
@@ -132,6 +133,13 @@ void Player::ApplyFallDamage()
         health -= (fallHeight - fallStartDamageHeight) * 10.0f; // Reduce health for dangerous falls
         std::cout << "Health reduced to: " << health << "\n";
     }
+
+    if (health <= 0.f)
+    {
+        glfwTerminate();
+        return;
+    }
+        
 }
 
 void Player::render(Scene& scene) {
