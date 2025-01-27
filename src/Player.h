@@ -1,31 +1,25 @@
-#pragma once
-#include "Camera.h"
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <iostream>
-
 class Player {
 public:
     Model playerModel;
-    std::shared_ptr <Camera> camera;
-    //glm::vec3 position;
+    std::shared_ptr<Camera> camera;
     glm::vec3 velocity;
     bool isGrounded = true;
     float speed = 2.5f; // Movement speed
     float jumpStrength = 5.0f; // Jumping force
     float gravity = -5.0f; // Gravitational acceleration
     float groundY = 0.0f; // Y-coordinate for the ground level
+    float health = 100.0f; // Player health
+    float fallStartHeight = 0.0f; // Track the height when the fall starts
 
     void processInput(GLFWwindow* window, float deltaTime);
     void applyPhysics(float deltaTime, Scene& scene);
-
     void render(Scene& scene);
 
-    Player(std::shared_ptr <Camera>& camera);
+    Player(std::shared_ptr<Camera>& camera);
     ~Player();
 };
 
-Player::Player(std::shared_ptr <Camera>& camera) : camera(camera), velocity(0.0f) {}
+Player::Player(std::shared_ptr<Camera>& camera) : camera(camera), velocity(0.0f) {}
 
 Player::~Player() {}
 
@@ -37,14 +31,14 @@ void Player::processInput(GLFWwindow* window, float deltaTime) {
 
     // Movement controls
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        glm::vec3 forward = glm::vec3(camera->front.x, 0.0f, camera->front.z); // Zerowanie komponentu y
+        glm::vec3 forward = glm::vec3(camera->front.x, 0.0f, camera->front.z);
         if (glm::length(forward) > 0.0f) {
             forward = glm::normalize(forward);
         }
         inputVelocity += forward;
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        glm::vec3 backward = glm::vec3(camera->front.x, 0.0f, camera->front.z); // Zerowanie komponentu y
+        glm::vec3 backward = glm::vec3(camera->front.x, 0.0f, camera->front.z);
         if (glm::length(backward) > 0.0f) {
             backward = glm::normalize(backward);
         }
@@ -52,7 +46,7 @@ void Player::processInput(GLFWwindow* window, float deltaTime) {
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
         glm::vec3 left = glm::cross(camera->front, camera->up);
-        left = glm::vec3(left.x, 0.0f, left.z); // Zerowanie komponentu y
+        left = glm::vec3(left.x, 0.0f, left.z);
         if (glm::length(left) > 0.0f) {
             left = glm::normalize(left);
         }
@@ -60,50 +54,54 @@ void Player::processInput(GLFWwindow* window, float deltaTime) {
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
         glm::vec3 right = glm::cross(camera->front, camera->up);
-        right = glm::vec3(right.x, 0.0f, right.z); // Zerowanie komponentu y
+        right = glm::vec3(right.x, 0.0f, right.z);
         if (glm::length(right) > 0.0f) {
             right = glm::normalize(right);
         }
         inputVelocity += right;
     }
 
-
-        // Obliczenie rotacji gracza na podstawie `camera->front`
+    // Player rotation
     if (glm::length(glm::vec2(camera->front.x, camera->front.z)) > 0.0f) {
         float angle = atan2(camera->front.x, camera->front.z);
-        playerModel.rotation.y = glm::degrees(angle); // Obrót wokó³ osi Y
+        playerModel.rotation.y = glm::degrees(angle);
     }
 
     velocity.x = inputVelocity.x;
     velocity.z = inputVelocity.z;
 
-    // Jump control (tylko oœ Y)
+    // Jump control
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && isGrounded) {
         velocity.y = jumpStrength;
         isGrounded = false;
     }
 }
-
-
 void Player::applyPhysics(float deltaTime, Scene& scene) {
     if (camera->freeFlyMode)
         return;
 
     velocity.y += gravity * deltaTime;
 
-
     playerModel.position += velocity * deltaTime;
 
     CollisionResult collision = scene.checkPlayerCollision(playerModel);
     if (collision.collided) {
-        // Jeœli kolizja, obs³u¿ kierunek
         if (collision.collisionNormal.y > 0.5f) {
-            // Kolizja od do³u - gracz l¹duje
+            // Player lands
+            if (!isGrounded) {
+                float fallHeight = fallStartHeight - playerModel.position.y;
+                std::cout << "Fall height: " << fallHeight << "f\n";
+
+                // Optionally apply damage for a dangerous fall
+                if (fallHeight > 5.0f) {
+                    health -= (fallHeight - 5.0f) * 10.0f; // Reduce health for dangerous falls
+                    std::cout << "Health reduced to: " << health << "\n";
+                }
+            }
             isGrounded = true;
             velocity.y = 0.0f;
         }
         else {
-            // Kolizja z boku lub góry - zablokuj ruch
             playerModel.position -= velocity * deltaTime;
             velocity.x = 0.0f;
             velocity.z = 0.0f;
@@ -115,15 +113,13 @@ void Player::applyPhysics(float deltaTime, Scene& scene) {
         velocity.y = 0.0f;
         isGrounded = true;
     }
-
-    if (glm::length(glm::vec2(velocity.x, velocity.z)) > 0.0f && isGrounded) {
-        velocity.x = 0.0f;
-        velocity.z = 0.0f;
+    else if (isGrounded) {
+        // Start of the fall
+        isGrounded = false;
+        fallStartHeight = playerModel.position.y;
     }
 }
 
-
-void Player::render(Scene& scene)
-{
+void Player::render(Scene& scene) {
     playerModel.render(scene.GetShader(playerModel, camera), camera->position);
 }

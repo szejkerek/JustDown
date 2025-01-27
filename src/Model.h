@@ -386,7 +386,7 @@ public:
 
         if (modelType == Parallax)
         {
-            shaderProgram->setFloat("heightScale", 0.1f);
+            shaderProgram->setFloat("heightScale", 0.01f);
         }
 
 
