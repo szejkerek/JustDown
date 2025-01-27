@@ -22,9 +22,6 @@ private:
         if (status != GL_FRAMEBUFFER_COMPLETE) {
             std::cerr << "Framebuffer is not complete! Status: " << status << std::endl;
         }
-        else {
-            std::cout << "Framebuffer is complete!" << std::endl;
-        }
     }
 
     void checkOpenGLError() const {
@@ -49,7 +46,7 @@ public:
             "src/Shaders/PostProcess/Quad.vs",
             "src/Shaders/PostProcess/Combine.fs");
 
-        // HDR framebuffer
+        // HDR framebuffer setup
         glGenFramebuffers(1, &hdrFBO);
         glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
 
@@ -69,7 +66,7 @@ public:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, brightBuffer, 0);
 
-        // Renderbuffer for depth and stencil
+        // Renderbuffer for depth
         glGenRenderbuffers(1, &rbo);
         glBindRenderbuffer(GL_RENDERBUFFER, rbo);
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
@@ -78,7 +75,11 @@ public:
         // Set draw buffers
         unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
         glDrawBuffers(2, attachments);
-        checkFramebufferStatus();
+
+        // Check framebuffer completeness
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            throw std::runtime_error("HDR Framebuffer not complete!");
+        }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         // Pingpong framebuffers
@@ -91,11 +92,15 @@ public:
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongColorbuffers[i], 0);
-            checkFramebufferStatus();
+
+            // Check framebuffer completeness
+            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+                throw std::runtime_error("Pingpong Framebuffer not complete!");
+            }
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        checkOpenGLError(); // Check for OpenGL errors
+        checkOpenGLError();
     }
 
     void BeginRender() {
@@ -111,18 +116,20 @@ public:
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, colorBuffer);
         glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[0]);
+        glClear(GL_COLOR_BUFFER_BIT);
         renderQuad();
 
         // Gaussian blur
         bool horizontal = true, firstIteration = true;
-        unsigned int amount = 10;
+        unsigned int amount = 10; // Number of blur passes
         for (unsigned int i = 0; i < amount; ++i) {
             glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);
             blurShader->use();
             blurShader->setBool("horizontal", horizontal);
             blurShader->setInt("inputTexture", 0);
             glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, firstIteration ? brightBuffer : pingpongColorbuffers[!horizontal]);
+            glBindTexture(GL_TEXTURE_2D, firstIteration ? pingpongColorbuffers[0] : pingpongColorbuffers[!horizontal]);
+            glClear(GL_COLOR_BUFFER_BIT);
             renderQuad();
             horizontal = !horizontal;
             if (firstIteration)
@@ -142,10 +149,8 @@ public:
         renderQuad();
     }
 
-    void renderQuad()
-    {
-        if (quadVAO == 0)
-        {
+    void renderQuad() {
+        if (quadVAO == 0) {
             float quadVertices[] = {
                 // positions        // texture Coords
                 -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
@@ -153,7 +158,6 @@ public:
                  1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
                  1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
             };
-            // setup plane VAO
             glGenVertexArrays(1, &quadVAO);
             glGenBuffers(1, &quadVBO);
             glBindVertexArray(quadVAO);
@@ -168,6 +172,7 @@ public:
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         glBindVertexArray(0);
     }
+
 
     ~PostProcess() {
         glDeleteFramebuffers(1, &hdrFBO);

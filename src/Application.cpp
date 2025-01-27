@@ -87,7 +87,7 @@ int main()
         player.applyPhysics(deltaTime, scene);
         player.render(scene);
         if (postProcessStoped) 
-            postProcess.ApplyBloom(0.70f, 0.6f);
+            postProcess.ApplyBloom(0.2f, 0.8f);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
