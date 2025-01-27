@@ -1,10 +1,10 @@
 Skybox
-Data/Geometry/cube.png
-Data/Geometry/cube.png
-Data/Geometry/cube.png
-Data/Geometry/cube.png
-Data/Geometry/cube.png
-Data/Geometry/cube.png
+Data/Skybox/Box_Right.bmp
+Data/Skybox/Box_Left.bmp
+Data/Skybox/Box_Top.bmp
+Data/Skybox/Box_Bottom.bmp
+Data/Skybox/Box_Front.bmp
+Data/Skybox/Box_Back.bmp
 
 Model Data/Geometry/cube.obj
 Texture0 Data/Geometry/cube.png

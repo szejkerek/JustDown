@@ -1,49 +1,49 @@
 #include "Skybox.h"
-#include <stb_image.h>  // Make sure stb_image is included for texture loading
+#include <stb_image.h>  // Include stb_image for texture loading
+#include <iostream>     // For logging
 
 Skybox::Skybox(const std::vector<std::string>& faces)
 {
     loadCubemap(faces);
 
-    // Create a cube with the size of the skybox
     float vertices[] = {
         // Positions
-        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,  // Back face
         -1.0f, -1.0f, -1.0f,
          1.0f, -1.0f, -1.0f,
          1.0f, -1.0f, -1.0f,
          1.0f,  1.0f, -1.0f,
         -1.0f,  1.0f, -1.0f,
 
-        -1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,  // Left face
         -1.0f, -1.0f, -1.0f,
         -1.0f,  1.0f, -1.0f,
         -1.0f,  1.0f, -1.0f,
         -1.0f,  1.0f,  1.0f,
-        -1.0f,  1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
 
-         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,  // Right face
          1.0f, -1.0f,  1.0f,
          1.0f,  1.0f,  1.0f,
          1.0f,  1.0f,  1.0f,
          1.0f,  1.0f, -1.0f,
          1.0f, -1.0f, -1.0f,
 
-        -1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,  // Front face
         -1.0f,  1.0f,  1.0f,
          1.0f,  1.0f,  1.0f,
          1.0f,  1.0f,  1.0f,
          1.0f, -1.0f,  1.0f,
         -1.0f, -1.0f,  1.0f,
 
-        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,  // Top face
          1.0f,  1.0f, -1.0f,
          1.0f,  1.0f,  1.0f,
          1.0f,  1.0f,  1.0f,
         -1.0f,  1.0f,  1.0f,
         -1.0f,  1.0f, -1.0f,
 
-        -1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,  // Bottom face
         -1.0f, -1.0f,  1.0f,
          1.0f, -1.0f, -1.0f,
          1.0f, -1.0f, -1.0f,
@@ -63,7 +63,6 @@ Skybox::Skybox(const std::vector<std::string>& faces)
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-
 }
 
 void Skybox::loadCubemap(const std::vector<std::string>& faces)
@@ -96,10 +95,13 @@ void Skybox::loadCubemap(const std::vector<std::string>& faces)
 
 void Skybox::render(std::shared_ptr<Shader> shaderProgram) const
 {
-    glUseProgram(shaderProgram->ID);  // Ensure you're using the right shader
-    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);  // Bind the cubemap texture
+    glDepthFunc(GL_LEQUAL);
+    glUseProgram(shaderProgram->ID);
 
-    glBindVertexArray(VAO);  // Bind the VAO
-    glDrawArrays(GL_TRIANGLES, 0, 36);  // Draw the skybox cube (36 vertices for the cube)
-    glBindVertexArray(0);  // Unbind the VAO
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glBindVertexArray(0);
+
+    glDepthFunc(GL_LESS);
 }
