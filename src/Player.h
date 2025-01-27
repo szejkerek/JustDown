@@ -10,9 +10,11 @@ public:
     float groundY = 0.0f; // Y-coordinate for the ground level
     float health = 100.0f; // Player health
     float fallStartHeight = 0.0f; // Track the height when the fall starts
+    float fallStartDamageHeight = 1.0f;
 
     void processInput(GLFWwindow* window, float deltaTime);
     void applyPhysics(float deltaTime, Scene& scene);
+    void ApplyFallDamage();
     void render(Scene& scene);
 
     Player(std::shared_ptr<Camera>& camera);
@@ -91,14 +93,7 @@ void Player::applyPhysics(float deltaTime, Scene& scene) {
         if (collision.collisionNormal.y > 0.5f) {
             // Player lands
             if (!isGrounded) {
-                float fallHeight = fallStartHeight - playerModel.position.y;
-                std::cout << "Fall height: " << fallHeight << "f\n";
-
-                // Optionally apply damage for a dangerous fall
-                if (fallHeight > 5.0f) {
-                    health -= (fallHeight - 5.0f) * 10.0f; // Reduce health for dangerous falls
-                    std::cout << "Health reduced to: " << health << "\n";
-                }
+                ApplyFallDamage();
             }
             isGrounded = true;
             velocity.y = 0.0f;
@@ -112,14 +107,7 @@ void Player::applyPhysics(float deltaTime, Scene& scene) {
 
     if (playerModel.position.y <= groundY) {
         if (!isGrounded) {
-            float fallHeight = fallStartHeight - playerModel.position.y;
-            std::cout << "Fall height: " << fallHeight << "f\n";
-
-            // Optionally apply damage for a dangerous fall
-            if (fallHeight > 5.0f) {
-                health -= (fallHeight - 5.0f) * 10.0f; // Reduce health for dangerous falls
-                std::cout << "Health reduced to: " << health << "\n";
-            }
+            ApplyFallDamage();
         }
 
         playerModel.position.y = groundY;
@@ -131,6 +119,18 @@ void Player::applyPhysics(float deltaTime, Scene& scene) {
         isGrounded = false;
         fallStartHeight = playerModel.position.y;
         std::cout << "Start to Fall: " << fallStartHeight << "\n";
+    }
+}
+
+void Player::ApplyFallDamage()
+{
+    float fallHeight = fallStartHeight - playerModel.position.y;
+    std::cout << "Fall height: " << fallHeight << "f\n";
+
+    // Optionally apply damage for a dangerous fall
+    if (fallHeight > fallStartDamageHeight) {
+        health -= (fallHeight - fallStartDamageHeight) * 10.0f; // Reduce health for dangerous falls
+        std::cout << "Health reduced to: " << health << "\n";
     }
 }
 
