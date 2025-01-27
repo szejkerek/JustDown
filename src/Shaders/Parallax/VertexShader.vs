@@ -1,4 +1,3 @@
-
 #version 330 core
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec2 aTexCoords;
@@ -8,12 +7,10 @@ layout (location = 4) in vec3 aBitangent;
 
 struct Light {
     vec3 position;
-
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
 };
-
 
 out VS_OUT {
     vec3 FragPos;
@@ -22,7 +19,6 @@ out VS_OUT {
     vec3 TangentViewPos;
     vec3 TangentFragPos;
 } vs_out;
-
 
 uniform mat4 transform;
 uniform mat4 view;
@@ -47,4 +43,3 @@ void main()
     
     gl_Position = projection * view * transform * vec4(aPos, 1.0);
 }
-

@@ -360,7 +360,7 @@ public:
 
         shaderProgram->setMat4("transform", modelMatrix);
 
-        if (modelType == Colored || modelType == Textured || modelType == Parallax)
+        if (modelType == Colored || modelType == Textured || modelType == Parallax || modelType == DoubleTextured)
         {
             glm::vec3 lightColor;
             lightColor.x = static_cast<float>(sin(glfwGetTime() * 2.0));

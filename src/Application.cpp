@@ -64,7 +64,7 @@ int main()
     player.playerModel.loadFromFile("Data/Geometry/cube.obj");
     player.playerModel.setupBuffers();
     player.playerModel.setScale(0.2f, 0.7f, 0.1f);
-    player.playerModel.setPosition(0.f, 21.0f, 0.f);
+    player.playerModel.setPosition(0.f, 1.0f, 0.f);
     PostProcess postProcess;
     postProcess.Init(width, height);
 
