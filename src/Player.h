@@ -10,7 +10,7 @@ public:
     float groundY = 0.0f; // Y-coordinate for the ground level
     float health = 100.0f; // Player health
     float fallStartHeight = 0.0f; // Track the height when the fall starts
-    float fallStartDamageHeight = 5.0f;
+    float fallStartDamageHeight = 4.0f;
 
     void processInput(GLFWwindow* window, float deltaTime);
     void applyPhysics(float deltaTime, Scene& scene);
@@ -69,8 +69,8 @@ void Player::processInput(GLFWwindow* window, float deltaTime) {
         playerModel.rotation.y = glm::degrees(angle);
     }
 
-    velocity.x = inputVelocity.x;
-    velocity.z = inputVelocity.z;
+    velocity.x = inputVelocity.x * speed;
+    velocity.z = inputVelocity.z * speed;
 
     // Jump control
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && isGrounded) {

@@ -191,12 +191,6 @@ bool Scene::loadFromFile(const std::string& filePath)
 void Scene::update(float deltaTime = 0.0f)
 {
 
-    if (!Model::checkCollision(sceneModels[0].getTransformedAABB(), sceneModels[1].getTransformedAABB()))
-    {
-        sceneModels[0].setPosition(sceneModels[0].position.x, sceneModels[0].position.y - 1.0 * deltaTime, sceneModels[0].position.z);
-    }
-
-
 }
 
 CollisionResult Scene::checkPlayerCollision(Model& playerModel) {
