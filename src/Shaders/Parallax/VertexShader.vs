@@ -18,13 +18,13 @@ out VS_OUT {
     vec3 TangentLightPos;
     vec3 TangentViewPos;
     vec3 TangentFragPos;
+    mat3 TBN;
 } vs_out;
 
 uniform mat4 transform;
 uniform mat4 view;
 uniform mat4 projection;
 
-uniform Light light;
 uniform vec3 viewPos;
 
 void main()
@@ -37,9 +37,9 @@ void main()
     vec3 N = normalize(mat3(transform) * aNormal);
     mat3 TBN = transpose(mat3(T, B, N));
 
-    vs_out.TangentLightPos = TBN * light.position;
     vs_out.TangentViewPos  = TBN * viewPos;
     vs_out.TangentFragPos  = TBN * vs_out.FragPos;
+    vs_out.TBN = TBN;
     
     gl_Position = projection * view * transform * vec4(aPos, 1.0);
 }

@@ -362,23 +362,57 @@ public:
 
         if (modelType == Colored || modelType == Textured || modelType == Parallax || modelType == DoubleTextured)
         {
-            glm::vec3 lightColor;
-            lightColor.x = static_cast<float>(sin(glfwGetTime() * 2.0));
+            //glm::vec3 lightColor = glm::vec3(0.4f, 0.8f,0.6f);
+           /* lightColor.x = static_cast<float>(sin(glfwGetTime() * 2.0));
             lightColor.y = static_cast<float>(sin(glfwGetTime() * 0.7));
-            lightColor.z = static_cast<float>(sin(glfwGetTime() * 1.3));
+            lightColor.z = static_cast<float>(sin(glfwGetTime() * 1.3));*/
+
+            float distance = 4.f;
+
+            glm::vec3 lightColor = glm::vec3(1.0f, 0.0f, 0.0f);
             glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f); // decrease the influence
             glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
 
             shaderProgram->setVec3("viewPos", viewPos);
 
 
-            shaderProgram->setVec3("light.position", 1.0f, 3.0f, 1.0f);
-            shaderProgram->setVec3("light.ambient", ambientColor);
-            shaderProgram->setVec3("light.diffuse", diffuseColor);
-            shaderProgram->setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+            shaderProgram->setVec3("light[0].position", distance, 2.0f, distance);
+            shaderProgram->setVec3("light[0].ambient", ambientColor);
+            shaderProgram->setVec3("light[0].diffuse", diffuseColor);
+            shaderProgram->setVec3("light[0].specular", 1.0f, 1.0f, 1.0f);
 
-            shaderProgram->setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
-            shaderProgram->setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+            lightColor = glm::vec3(0.0f, 1.0f, 0.0f);
+            diffuseColor = lightColor * glm::vec3(0.5f); 
+            ambientColor = diffuseColor * glm::vec3(0.2f);
+
+
+            shaderProgram->setVec3("light[1].position", -distance, 2.0f, distance);
+            shaderProgram->setVec3("light[1].ambient", ambientColor);
+            shaderProgram->setVec3("light[1].diffuse", diffuseColor);
+            shaderProgram->setVec3("light[1].specular", 1.0f, 1.0f, 1.0f);
+
+            lightColor = glm::vec3(0.0f, 0.0f, 1.0f);
+            diffuseColor = lightColor * glm::vec3(0.5f);
+            ambientColor = diffuseColor * glm::vec3(0.2f);
+
+            shaderProgram->setVec3("light[2].position", distance, 2.0f, -distance);
+            shaderProgram->setVec3("light[2].ambient", ambientColor);
+            shaderProgram->setVec3("light[2].diffuse", diffuseColor);
+            shaderProgram->setVec3("light[2].specular", 1.0f, 1.0f, 1.0f);
+
+
+            lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+            diffuseColor = lightColor * glm::vec3(0.5f);
+            ambientColor = diffuseColor * glm::vec3(0.2f);
+
+            shaderProgram->setVec3("light[3].position", 0.0f,22.0f, 0.0f);
+            shaderProgram->setVec3("light[3].ambient", ambientColor);
+            shaderProgram->setVec3("light[3].diffuse", diffuseColor);
+            shaderProgram->setVec3("light[3].specular", 1.0f, 1.0f, 1.0f);
+
+
+            shaderProgram->setVec3("material.ambient", 0.3f, 0.6f, 0.2f);
+            shaderProgram->setVec3("material.diffuse", 1.0f, 1.0f, 1.0f);
             shaderProgram->setVec3("material.specular", 0.5f, 0.5f, 0.5f);
             shaderProgram->setFloat("material.shininess", .5f);
      

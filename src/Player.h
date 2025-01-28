@@ -10,7 +10,7 @@ public:
     float groundY = 0.0f; // Y-coordinate for the ground level
     float health = 100.0f; // Player health
     float fallStartHeight = 0.0f; // Track the height when the fall starts
-    float fallStartDamageHeight = 1.0f;
+    float fallStartDamageHeight = 5.0f;
 
     void processInput(GLFWwindow* window, float deltaTime);
     void applyPhysics(float deltaTime, Scene& scene);

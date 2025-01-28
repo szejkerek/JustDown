@@ -7,6 +7,7 @@ in VS_OUT {
     vec3 TangentLightPos;
     vec3 TangentViewPos;
     vec3 TangentFragPos;
+    mat3 TBN;
 } fs_in;
 
 uniform sampler2D texture1; // diffuseMap
@@ -30,7 +31,7 @@ struct Light {
 };
 
 uniform Material material;
-uniform Light light;
+uniform Light light[4];
 uniform vec3 viewPos;
 
 vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
@@ -73,23 +74,35 @@ void main()
         discard;
 
     // obtain normal from normal map
-    vec3 normal = texture(texture2, texCoords).rgb;
-    normal = normalize(normal * 2.0 - 1.0);   
+    vec3 norm = texture(texture2, texCoords).rgb;
+    norm = normalize(norm * 2.0 - 1.0);   
    
-    // calculate ambient lighting
-    vec3 ambient = light.ambient * texture(texture1, texCoords).rgb;
 
-    // calculate diffuse lighting
-    vec3 lightDir = normalize(fs_in.TangentLightPos - fs_in.TangentFragPos);
-    float diff = max(dot(normal, lightDir), 0.0);
-    vec3 diffuse = light.diffuse * (diff * material.diffuse);
 
-    // calculate specular lighting
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    vec3 specular = light.specular * (spec * material.specular);
+    vec3 result= vec3(0.0);
 
-    // combine results
-    vec3 result = ambient + diffuse + specular;
+
+    for(int i = 0; i < 4; i++)
+    {
+        vec3 ambient =  light[i].ambient * texture(texture1, texCoords).rgb;
+        // calculate diffuse lighting
+        vec3 TanLightPos = fs_in.TBN * light[i].position;
+        vec3 lightDir = normalize(TanLightPos - fs_in.TangentFragPos);
+        float diff = max(dot(norm, lightDir), 0.0);
+        vec3 diffuse = light[i].diffuse * (diff * texture(texture1, texCoords).rgb);
+
+        // calculate specular lighting
+        vec3 reflectDir = reflect(-lightDir, norm);
+        float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+        vec3 specular = light[i].specular * (spec * material.specular);
+        
+        float distance = length(light[i].position - fs_in.FragPos);
+        float attenuation  =1.0 / (1.0 + 0.09*distance + 0.032*distance*distance);
+        result+= (diffuse + specular+ ambient) * attenuation;
+     }
+
+
+
+
     FragColor = vec4(result, 1.0);
 }

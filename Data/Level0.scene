@@ -19,7 +19,7 @@ Rotation 0 20 0
 Scale 1 .5 1
 
 Model Data/Geometry/cube.obj
-Texture0 Data/Geometry/cube.png
+Texture0 Data/paralax/brick_color.jpg
 Texture1 Data/Geometry/cube2.png
 Position 4 1 0
 Rotation 0 40 0
@@ -27,7 +27,7 @@ Scale .25 .25 .25
 
 Model Data/Geometry/cube.obj
 Texture0 Data/Geometry/cube2.png
-Texture1 Data/Geometry/cube.png
+Texture1 Data/paralax/brick_color.jpg
 Position 4 1 1
 Rotation 0 40 0
 Scale .25 .25 .25
@@ -55,13 +55,77 @@ Rotation 0 40 0
 Scale .25 .25 .25
 
 Model Data/Geometry/cube.obj
+Position 0 -6 0
+Rotation 0 0 0
+Scale 10 5	10
+
+Model Data/Geometry/cube.obj
+Texture0 Data/Geometry/rock.jpg
+Texture1 Data/Geometry/cube2.png
+Position 2 22 0
+Rotation 0 0 0
+Scale .25 .25 .25
+
+Model Data/Geometry/cube.obj
+Texture0 Data/Geometry/cube2.png
+Texture1 Data/Geometry/rock.jpg
+Position -2 22 0
+Rotation 0 0 0
+Scale .25 .25 .25
+
+
+
+
+Model Data/Geometry/cube.obj
 Texture0 Data/paralax/brick_color.jpg
 Texture1 Data/paralax/brick_normal.jpg
 Texture2 Data/paralax/brick_height.png
-Position 0 5 0
+Position 0 20 0
 Rotation 0 0 0
-Scale 3 .5 3
+Scale 1 .5 1
 
+Model Data/Pistol/pistol.obj
+Texture0 Data/Pistol/pistol.png
+Position 2 16 2
+Rotation 0 0 0
+Scale 20 10 10
+
+Model Data/Geometry/cube.obj
+Texture0 Data/Geometry/cube2.png
+Position 2 12 -2
+Rotation 0 0 0
+Scale 1 .75 2
+
+Model Data/Geometry/cube.obj
+Texture0 Data/paralax/brick_color.jpg
+Texture1 Data/paralax/brick_normal.jpg
+Texture2 Data/paralax/brick_height.png
+Position -3 9 -3
+Rotation 0 0 0
+Scale 2 .75 2
+
+Model Data/Pistol/pistol.obj
+Texture0 Data/Pistol/pistol.png
+Position 4 6 -2
+Rotation 0 0 0
+Scale 20 10 10
+
+Model Data/Geometry/cube.obj
+Texture0 Data/paralax/brick_color.jpg
+Texture1 Data/paralax/brick_normal.jpg
+Texture2 Data/paralax/brick_height.png
+Position -2 5 4
+Rotation 0 0 0
+Scale 1 .75 2.5
+
+
+Model Data/Geometry/cube.obj
+Texture0 Data/paralax/brick_color.jpg
+Texture1 Data/paralax/brick_normal.jpg
+Texture2 Data/paralax/brick_height.png
+Position -2 2 -2
+Rotation 0 0 0
+Scale 1 .75 1
 
 
 Model Data/Pistol/pistol.obj
@@ -69,5 +133,6 @@ Texture0 Data/Pistol/pistol.png
 Position 0.9 0 0
 Rotation 0 45 0
 Scale 1 1 1
+
 
 Player 0 0 0
