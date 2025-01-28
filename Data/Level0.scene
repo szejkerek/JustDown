@@ -111,18 +111,16 @@ Rotation 0 0 0
 Scale 20 10 10
 
 Model Data/Geometry/cube.obj
-Texture0 Data/paralax/brick_color.jpg
-Texture1 Data/paralax/brick_normal.jpg
-Texture2 Data/paralax/brick_height.png
+Texture0 Data/paralax/rock2_color.png
+Texture1 Data/paralax/rock2_normal.png
+Texture2 Data/paralax/rock2_height.jpg
 Position -2 5 4
 Rotation 0 0 0
-Scale 1 .75 2.5
+Scale 1 1 1
 
 
 Model Data/Geometry/cube.obj
-Texture0 Data/paralax/brick_color.jpg
-Texture1 Data/paralax/brick_normal.jpg
-Texture2 Data/paralax/brick_height.png
+Texture0 Data/Bed/blue.jpg
 Position -2 2 -2
 Rotation 0 0 0
 Scale 1 .75 1
